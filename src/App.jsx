@@ -1,10 +1,10 @@
 import "./App.css";
+import Wizard from "./components/wizard/Wizard";
 
 function App() {
   return (
     <div className="app">
-      <h1>LendSwift Loan Application</h1>
-      <p>Front End Developer Project - Zetheta</p>
+      <Wizard />
     </div>
   );
 }
