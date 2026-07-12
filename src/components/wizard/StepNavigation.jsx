@@ -1,13 +1,40 @@
+import { useFormContext } from "react-hook-form";
+import { TOTAL_STEPS } from "../../config/formConfig";
+
 function StepNavigation({ currentStep, setCurrentStep }) {
-  const handleNext = () => {
-    if (currentStep < 8) {
-      setCurrentStep(currentStep + 1);
+  const { trigger } = useFormContext();
+
+  const handleNext = async () => {
+    let fieldsToValidate = [];
+
+    switch (currentStep) {
+      case 1:
+        fieldsToValidate = [
+          "loanType",
+          "loanAmount",
+          "loanTenure",
+          "loanPurpose",
+          "referralCode",
+        ];
+        break;
+
+      default:
+        fieldsToValidate = [];
+    }
+
+    const isValid =
+      fieldsToValidate.length === 0
+        ? true
+        : await trigger(fieldsToValidate);
+
+    if (isValid && currentStep < TOTAL_STEPS) {
+      setCurrentStep((prev) => prev + 1);
     }
   };
 
   const handlePrevious = () => {
     if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
+      setCurrentStep((prev) => prev - 1);
     }
   };
 
@@ -15,16 +42,23 @@ function StepNavigation({ currentStep, setCurrentStep }) {
     <div
       style={{
         display: "flex",
-        gap: "10px",
+        justifyContent: "space-between",
         marginTop: "20px",
       }}
     >
-      <button onClick={handlePrevious} disabled={currentStep === 1}>
+      <button
+        type="button"
+        onClick={handlePrevious}
+        disabled={currentStep === 1}
+      >
         Previous
       </button>
 
-      <button onClick={handleNext} disabled={currentStep === 8}>
-        Next
+      <button
+        type="button"
+        onClick={handleNext}
+      >
+        {currentStep === TOTAL_STEPS ? "Submit" : "Next"}
       </button>
     </div>
   );

@@ -1,7 +1,4 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-
-import { step1Schema } from "../schemas/step1Schema";
+import { useFormContext } from "react-hook-form";
 
 import Input from "../components/common/Input";
 import RadioGroup from "../components/common/RadioGroup";
@@ -16,19 +13,9 @@ import {
 function Step1LoanType() {
   const {
     register,
-    handleSubmit,
     watch,
     formState: { errors },
-  } = useForm({
-    resolver: zodResolver(step1Schema),
-    defaultValues: {
-      loanType: "",
-      loanAmount: undefined,
-      loanTenure: "",
-      loanPurpose: "",
-      referralCode: "",
-    },
-  });
+  } = useFormContext();
 
   const selectedLoanType = watch("loanType");
 
@@ -46,12 +33,8 @@ function Step1LoanType() {
       }))
     : [];
 
-  const onSubmit = (data) => {
-    console.log("Step 1 Data", data);
-  };
-
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <div>
       <h2>Step 1 - Loan Details</h2>
 
       <RadioGroup
@@ -101,11 +84,7 @@ function Step1LoanType() {
         error={errors.referralCode?.message}
         {...register("referralCode")}
       />
-
-      <button type="submit">
-        Validate Step 1
-      </button>
-    </form>
+    </div>
   );
 }
 
