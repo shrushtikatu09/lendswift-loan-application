@@ -1,11 +1,11 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { step1Schema } from "../schemas/step1Schema";
+import { loanApplicationSchema } from "../schemas/loanApplicationSchema";
 
 export function useLoanForm() {
   return useForm({
-    resolver: zodResolver(step1Schema),
+    resolver: zodResolver(loanApplicationSchema),
 
     mode: "onTouched",
 
