@@ -1,7 +1,4 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-
-import { step6Schema } from "../schemas/step6Schema";
+import { useFormContext } from "react-hook-form";
 
 import Input from "../components/common/Input";
 import RadioGroup from "../components/common/RadioGroup";
@@ -12,28 +9,14 @@ import { RELATIONSHIP_OPTIONS } from "../data/coApplicantOptions";
 function Step6CoApplicant() {
   const {
     register,
-    handleSubmit,
     watch,
     formState: { errors },
-  } = useForm({
-    resolver: zodResolver(step6Schema),
-    defaultValues: {
-      hasCoApplicant: "",
-      coApplicantName: "",
-      relationship: "",
-      coApplicantMobile: "",
-      coApplicantIncome: undefined,
-    },
-  });
+  } = useFormContext();
 
   const hasCoApplicant = watch("hasCoApplicant");
 
-  const onSubmit = (data) => {
-    console.log("Step 6 Data:", data);
-  };
-
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <div>
       <h2>Step 6 - Co-Applicant Details</h2>
 
       <RadioGroup
@@ -88,11 +71,7 @@ function Step6CoApplicant() {
           />
         </>
       )}
-
-      <button type="submit">
-        Validate Step 6
-      </button>
-    </form>
+    </div>
   );
 }
 
