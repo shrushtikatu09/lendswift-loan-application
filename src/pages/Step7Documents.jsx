@@ -1,25 +1,15 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-
-import { step7Schema } from "../schemas/step7Schema";
+import { useFormContext } from "react-hook-form";
 
 import FileUpload from "../components/common/FileUpload";
 
 function Step7Documents() {
   const {
     register,
-    handleSubmit,
     formState: { errors },
-  } = useForm({
-    resolver: zodResolver(step7Schema),
-  });
-
-  const onSubmit = (data) => {
-    console.log("Step 7 Data:", data);
-  };
+  } = useFormContext();
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <div>
       <h2>Step 7 - Upload Documents</h2>
 
       <FileUpload
@@ -53,11 +43,7 @@ function Step7Documents() {
         register={register}
         error={errors.bankStatement?.message}
       />
-
-      <button type="submit">
-        Validate Step 7
-      </button>
-    </form>
+    </div>
   );
 }
 
