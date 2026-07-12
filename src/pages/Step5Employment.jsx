@@ -1,7 +1,4 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-
-import { step5Schema } from "../schemas/step5Schema";
+import { useFormContext } from "react-hook-form";
 
 import Input from "../components/common/Input";
 import Select from "../components/common/Select";
@@ -11,27 +8,14 @@ import { EMPLOYMENT_TYPES } from "../data/employmentOptions";
 function Step5Employment() {
   const {
     register,
-    handleSubmit,
     watch,
     formState: { errors },
-  } = useForm({
-    resolver: zodResolver(step5Schema),
-    defaultValues: {
-      employmentType: "",
-      companyName: "",
-      monthlyIncome: undefined,
-      workExperience: "",
-    },
-  });
+  } = useFormContext();
 
   const employmentType = watch("employmentType");
 
-  const onSubmit = (data) => {
-    console.log("Step 5 Data:", data);
-  };
-
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <div>
       <h2>Step 5 - Employment Details</h2>
 
       <Select
@@ -74,7 +58,7 @@ function Step5Employment() {
           />
 
           <Input
-            label="Work Experience (Years)"
+            label="Work Experience"
             id="workExperience"
             placeholder="e.g. 5 Years"
             error={errors.workExperience?.message}
@@ -82,11 +66,7 @@ function Step5Employment() {
           />
         </>
       )}
-
-      <button type="submit">
-        Validate Step 5
-      </button>
-    </form>
+    </div>
   );
 }
 
