@@ -12,7 +12,13 @@ function StepNavigation({ currentStep, setCurrentStep }) {
   };
 
   return (
-    <div>
+    <div
+      style={{
+        display: "flex",
+        gap: "10px",
+        marginTop: "20px",
+      }}
+    >
       <button onClick={handlePrevious} disabled={currentStep === 1}>
         Previous
       </button>
