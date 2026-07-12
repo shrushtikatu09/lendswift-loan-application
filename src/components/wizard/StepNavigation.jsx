@@ -1,31 +1,65 @@
 import { useFormContext } from "react-hook-form";
 import { TOTAL_STEPS } from "../../config/formConfig";
 
+const STEP_FIELDS = {
+  1: [
+    "loanType",
+    "loanAmount",
+    "loanTenure",
+    "loanPurpose",
+    "referralCode",
+  ],
+  2: [
+    "fullName",
+    "email",
+    "mobile",
+    "dateOfBirth",
+    "gender",
+    "maritalStatus",
+  ],
+  3: [
+    "panNumber",
+    "aadhaarNumber",
+    "consent",
+  ],
+  4: [
+    "addressLine1",
+    "city",
+    "state",
+    "pinCode",
+    "addressType",
+  ],
+  5: [
+    "employmentType",
+    "companyName",
+    "monthlyIncome",
+    "workExperience",
+  ],
+  6: [
+    "hasCoApplicant",
+    "coApplicantName",
+    "relationship",
+    "coApplicantMobile",
+    "coApplicantIncome",
+  ],
+  7: [
+    "panCard",
+    "aadhaarCard",
+    "salarySlip",
+    "bankStatement",
+  ],
+};
+
 function StepNavigation({ currentStep, setCurrentStep }) {
   const { trigger } = useFormContext();
 
   const handleNext = async () => {
-    let fieldsToValidate = [];
-
-    switch (currentStep) {
-      case 1:
-        fieldsToValidate = [
-          "loanType",
-          "loanAmount",
-          "loanTenure",
-          "loanPurpose",
-          "referralCode",
-        ];
-        break;
-
-      default:
-        fieldsToValidate = [];
-    }
+    const fields = STEP_FIELDS[currentStep] || [];
 
     const isValid =
-      fieldsToValidate.length === 0
+      fields.length === 0
         ? true
-        : await trigger(fieldsToValidate);
+        : await trigger(fields);
 
     if (isValid && currentStep < TOTAL_STEPS) {
       setCurrentStep((prev) => prev + 1);
@@ -39,13 +73,7 @@ function StepNavigation({ currentStep, setCurrentStep }) {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        marginTop: "20px",
-      }}
-    >
+    <div className="flex justify-between mt-6">
       <button
         type="button"
         onClick={handlePrevious}
