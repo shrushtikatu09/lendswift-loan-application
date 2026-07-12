@@ -1,70 +1,110 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import { step1Schema } from "../schemas/step1Schema";
+
+import Input from "../components/common/Input";
+import RadioGroup from "../components/common/RadioGroup";
+import Select from "../components/common/Select";
+
+import {
+  LOAN_TYPES,
+  LOAN_TENURES,
+  LOAN_PURPOSES,
+} from "../data/loanOptions";
 
 function Step1LoanType() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(step1Schema),
+    defaultValues: {
+      loanType: "",
+      loanAmount: undefined,
+      loanTenure: "",
+      loanPurpose: "",
+      referralCode: "",
+    },
   });
 
+  const selectedLoanType = watch("loanType");
+
+  const tenureOptions = selectedLoanType
+    ? LOAN_TENURES[selectedLoanType].map((month) => ({
+        label: `${month} Months`,
+        value: String(month),
+      }))
+    : [];
+
+  const purposeOptions = selectedLoanType
+    ? LOAN_PURPOSES[selectedLoanType].map((purpose) => ({
+        label: purpose,
+        value: purpose,
+      }))
+    : [];
+
   const onSubmit = (data) => {
-    console.log(data);
+    console.log("Step 1 Data", data);
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <h3>Step 1 - Loan Type Selection</h3>
+      <h2>Step 1 - Loan Details</h2>
 
-      <div>
-        <label>Loan Type</label>
-        <br />
+      <RadioGroup
+        label="Loan Type"
+        name="loanType"
+        options={LOAN_TYPES}
+        register={register}
+        error={errors.loanType?.message}
+      />
 
-        <input
-          type="radio"
-          value="Personal"
-          {...register("loanType")}
-        />
-        Personal
+      <Input
+        label="Loan Amount"
+        id="loanAmount"
+        type="number"
+        placeholder="Enter Loan Amount"
+        error={errors.loanAmount?.message}
+        {...register("loanAmount", {
+          valueAsNumber: true,
+        })}
+      />
 
-        <input
-          type="radio"
-          value="Home"
-          {...register("loanType")}
-        />
-        Home
+      <Select
+        label="Loan Tenure"
+        id="loanTenure"
+        name="loanTenure"
+        placeholder="Select Loan Tenure"
+        options={tenureOptions}
+        register={register}
+        error={errors.loanTenure?.message}
+      />
 
-        <input
-          type="radio"
-          value="Business"
-          {...register("loanType")}
-        />
-        Business
+      <Select
+        label="Loan Purpose"
+        id="loanPurpose"
+        name="loanPurpose"
+        placeholder="Select Loan Purpose"
+        options={purposeOptions}
+        register={register}
+        error={errors.loanPurpose?.message}
+      />
 
-        <p>{errors.loanType?.message}</p>
-      </div>
+      <Input
+        label="Referral Code (Optional)"
+        id="referralCode"
+        type="text"
+        placeholder="Enter Referral Code"
+        error={errors.referralCode?.message}
+        {...register("referralCode")}
+      />
 
-      <br />
-
-      <div>
-        <label>Loan Amount</label>
-        <br />
-
-        <input
-          type="number"
-          placeholder="Enter Amount"
-          {...register("loanAmount", { valueAsNumber: true })}
-        />
-
-        <p>{errors.loanAmount?.message}</p>
-      </div>
-
-      <br />
-
-      <button type="submit">Validate Step 1</button>
+      <button type="submit">
+        Validate Step 1
+      </button>
     </form>
   );
 }
