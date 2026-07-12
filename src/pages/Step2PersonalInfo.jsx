@@ -1,7 +1,4 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-
-import { step2Schema } from "../schemas/step2Schema";
+import { useFormContext } from "react-hook-form";
 
 import Input from "../components/common/Input";
 import RadioGroup from "../components/common/RadioGroup";
@@ -10,26 +7,11 @@ import Select from "../components/common/Select";
 function Step2PersonalInfo() {
   const {
     register,
-    handleSubmit,
     formState: { errors },
-  } = useForm({
-    resolver: zodResolver(step2Schema),
-    defaultValues: {
-      fullName: "",
-      email: "",
-      mobile: "",
-      dateOfBirth: "",
-      gender: "",
-      maritalStatus: "",
-    },
-  });
-
-  const onSubmit = (data) => {
-    console.log("Step 2 Data:", data);
-  };
+  } = useFormContext();
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <div>
       <h2>Step 2 - Personal Information</h2>
 
       <Input
@@ -113,11 +95,7 @@ function Step2PersonalInfo() {
         ]}
         error={errors.maritalStatus?.message}
       />
-
-      <button type="submit">
-        Validate Step 2
-      </button>
-    </form>
+    </div>
   );
 }
 
