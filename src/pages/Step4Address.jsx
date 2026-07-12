@@ -1,7 +1,4 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-
-import { step4Schema } from "../schemas/step4Schema";
+import { useFormContext } from "react-hook-form";
 
 import Input from "../components/common/Input";
 import Select from "../components/common/Select";
@@ -11,26 +8,11 @@ import { ADDRESS_TYPES } from "../data/addressOptions";
 function Step4Address() {
   const {
     register,
-    handleSubmit,
     formState: { errors },
-  } = useForm({
-    resolver: zodResolver(step4Schema),
-    defaultValues: {
-      addressLine1: "",
-      addressLine2: "",
-      city: "",
-      state: "",
-      pinCode: "",
-      addressType: "",
-    },
-  });
-
-  const onSubmit = (data) => {
-    console.log("Step 4 Data:", data);
-  };
+  } = useFormContext();
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <div>
       <h2>Step 4 - Address Information</h2>
 
       <Input
@@ -82,11 +64,7 @@ function Step4Address() {
         options={ADDRESS_TYPES}
         error={errors.addressType?.message}
       />
-
-      <button type="submit">
-        Validate Step 4
-      </button>
-    </form>
+    </div>
   );
 }
 

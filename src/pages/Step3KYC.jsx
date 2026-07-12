@@ -3,6 +3,9 @@ import { useFormContext } from "react-hook-form";
 import Input from "../components/common/Input";
 import Checkbox from "../components/common/Checkbox";
 
+import { validatePAN } from "../utils/validators";
+import { useVerification } from "../hooks/useVerification";
+
 function Step3KYC() {
   const {
     register,
