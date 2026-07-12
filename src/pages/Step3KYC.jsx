@@ -1,7 +1,4 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-
-import { step3Schema } from "../schemas/step3Schema";
+import { useFormContext } from "react-hook-form";
 
 import Input from "../components/common/Input";
 import Checkbox from "../components/common/Checkbox";
@@ -9,23 +6,11 @@ import Checkbox from "../components/common/Checkbox";
 function Step3KYC() {
   const {
     register,
-    handleSubmit,
     formState: { errors },
-  } = useForm({
-    resolver: zodResolver(step3Schema),
-    defaultValues: {
-      panNumber: "",
-      aadhaarNumber: "",
-      consent: false,
-    },
-  });
-
-  const onSubmit = (data) => {
-    console.log("Step 3 Data:", data);
-  };
+  } = useFormContext();
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <div>
       <h2>Step 3 - KYC Verification</h2>
 
       <Input
@@ -53,11 +38,7 @@ function Step3KYC() {
         register={register}
         error={errors.consent?.message}
       />
-
-      <button type="submit">
-        Validate Step 3
-      </button>
-    </form>
+    </div>
   );
 }
 
