@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 
 export function usePinLookup() {
   const [loading, setLoading] = useState(false);
   const [lookupError, setLookupError] = useState("");
 
-  const lookupPin = async (pinCode) => {
+  const lookupPin = useCallback(async (pinCode) => {
     setLookupError("");
 
     if (!/^\d{6}$/.test(pinCode)) {
@@ -36,14 +36,17 @@ export function usePinLookup() {
         state: office.State,
       };
     } catch (error) {
+      console.error(error);
+
       setLookupError(
         "Unable to fetch address details. Please try again."
       );
+
       return null;
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   return {
     lookupPin,
