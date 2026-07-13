@@ -9,6 +9,7 @@ const STEP_FIELDS = {
     "loanPurpose",
     "referralCode",
   ],
+
   2: [
     "fullName",
     "email",
@@ -17,11 +18,13 @@ const STEP_FIELDS = {
     "gender",
     "maritalStatus",
   ],
+
   3: [
     "panNumber",
     "aadhaarNumber",
     "consent",
   ],
+
   4: [
     "addressLine1",
     "city",
@@ -29,12 +32,7 @@ const STEP_FIELDS = {
     "pinCode",
     "addressType",
   ],
-  5: [
-    "employmentType",
-    "companyName",
-    "monthlyIncome",
-    "workExperience",
-  ],
+
   6: [
     "hasCoApplicant",
     "coApplicantName",
@@ -42,6 +40,7 @@ const STEP_FIELDS = {
     "coApplicantMobile",
     "coApplicantIncome",
   ],
+
   7: [
     "panCard",
     "aadhaarCard",
@@ -51,15 +50,63 @@ const STEP_FIELDS = {
 };
 
 function StepNavigation({ currentStep, setCurrentStep }) {
-  const { trigger } = useFormContext();
+  const {
+    trigger,
+    watch,
+  } = useFormContext();
 
   const handleNext = async () => {
-    const fields = STEP_FIELDS[currentStep] || [];
+    let fields = STEP_FIELDS[currentStep] || [];
 
-    const isValid =
-      fields.length === 0
-        ? true
-        : await trigger(fields);
+    if (currentStep === 5) {
+      const employmentType = watch("employmentType");
+
+      switch (employmentType) {
+        case "salaried":
+          fields = [
+            "employmentType",
+            "companyName",
+            "designation",
+            "monthlyIncome",
+            "workExperience",
+          ];
+          break;
+
+        case "self-employed":
+          fields = [
+            "employmentType",
+            "businessName",
+            "businessType",
+            "annualTurnover",
+            "yearsInBusiness",
+            "selfMonthlyIncome",
+            "officeAddress",
+          ];
+          break;
+
+        case "business":
+          fields = [
+            "employmentType",
+            "businessName",
+            "businessType",
+            "annualTurnover",
+            "yearsInBusiness",
+            "gstNumber",
+            "officeAddress",
+          ];
+          break;
+
+        default:
+          fields = ["employmentType"];
+      }
+    }
+
+    const isValid = await trigger(fields);
+
+    console.log("Current Step :", currentStep);
+    console.log("Employment :", watch("employmentType"));
+    console.log("Fields :", fields);
+    console.log("Valid :", isValid);
 
     if (isValid && currentStep < TOTAL_STEPS) {
       setCurrentStep((prev) => prev + 1);
