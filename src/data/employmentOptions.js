@@ -16,3 +16,30 @@ export const EMPLOYMENT_TYPES = [
     value: "student",
   },
 ];
+
+export const BUSINESS_TYPES = [
+  {
+    label: "Retail",
+    value: "retail",
+  },
+  {
+    label: "Manufacturing",
+    value: "manufacturing",
+  },
+  {
+    label: "IT Services",
+    value: "it-services",
+  },
+  {
+    label: "Healthcare",
+    value: "healthcare",
+  },
+  {
+    label: "Construction",
+    value: "construction",
+  },
+  {
+    label: "Others",
+    value: "others",
+  },
+];
