@@ -11,10 +11,6 @@ export const EMPLOYMENT_TYPES = [
     label: "Business Owner",
     value: "business",
   },
-  {
-    label: "Student",
-    value: "student",
-  },
 ];
 
 export const BUSINESS_TYPES = [
