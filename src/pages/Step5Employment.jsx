@@ -47,10 +47,18 @@ function Step5Employment() {
           />
 
           <Input
-            label="Monthly Income"
+            label="Designation"
+            id="designation"
+            placeholder="Enter Designation"
+            error={errors.designation?.message}
+            {...register("designation")}
+          />
+
+          <Input
+            label="Monthly Net Salary"
             id="monthlyIncome"
             type="number"
-            placeholder="Enter Monthly Income"
+            placeholder="Enter Monthly Net Salary"
             error={errors.monthlyIncome?.message}
             {...register("monthlyIncome", {
               valueAsNumber: true,
@@ -58,9 +66,9 @@ function Step5Employment() {
           />
 
           <Input
-            label="Work Experience"
+            label="Years of Experience"
             id="workExperience"
-            placeholder="e.g. 5 Years"
+            placeholder="Enter Years of Experience"
             error={errors.workExperience?.message}
             {...register("workExperience")}
           />
