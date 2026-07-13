@@ -1,9 +1,10 @@
 const PAN_REGEX = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
+const AADHAAR_REGEX = /^\d{12}$/;
 
-const VALID_ENTITY_TYPES = ["P", "C", "F"];
+const BUSINESS_ENTITY_TYPES = ["P", "C", "F"];
 
 export function validatePAN(pan, loanType) {
-  const value = pan.trim().toUpperCase();
+  const value = (pan || "").trim().toUpperCase();
 
   if (!PAN_REGEX.test(value)) {
     return {
@@ -27,12 +28,28 @@ export function validatePAN(pan, loanType) {
 
   if (
     loanType === "business" &&
-    !VALID_ENTITY_TYPES.includes(entityType)
+    !BUSINESS_ENTITY_TYPES.includes(entityType)
   ) {
     return {
       valid: false,
       message:
         "Business loan PAN must contain P, C or F as the entity type.",
+    };
+  }
+
+  return {
+    valid: true,
+    message: "",
+  };
+}
+
+export function validateAadhaar(aadhaar) {
+  const value = (aadhaar || "").trim();
+
+  if (!AADHAAR_REGEX.test(value)) {
+    return {
+      valid: false,
+      message: "Aadhaar must contain exactly 12 digits.",
     };
   }
 

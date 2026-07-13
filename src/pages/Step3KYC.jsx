@@ -9,21 +9,67 @@ import { useVerification } from "../hooks/useVerification";
 function Step3KYC() {
   const {
     register,
+    watch,
     formState: { errors },
   } = useFormContext();
 
-  return (
-    <div>
-      <h2>Step 3 - KYC Verification</h2>
+  const loanType = watch("loanType");
+  const panNumber = watch("panNumber");
 
-      <Input
-        label="PAN Number"
-        id="panNumber"
-        type="text"
-        placeholder="ABCDE1234F"
-        error={errors.panNumber?.message}
-        {...register("panNumber")}
-      />
+  const {
+    verify,
+    resetVerification,
+    isVerifying,
+    isVerified,
+    error,
+  } = useVerification();
+
+  const handlePanVerification = async () => {
+    await verify(
+      (value) => validatePAN(value, loanType),
+      panNumber
+    );
+  };
+
+  return (
+    <div className="space-y-6">
+      <h2 className="text-2xl font-semibold">
+        Step 3 - KYC Verification
+      </h2>
+
+      <div>
+        <Input
+          label="PAN Number"
+          id="panNumber"
+          type="text"
+          placeholder="ABCDE1234F"
+          error={errors.panNumber?.message}
+          {...register("panNumber", {
+            onChange: () => resetVerification(),
+          })}
+        />
+
+        <button
+          type="button"
+          onClick={handlePanVerification}
+          disabled={!panNumber || isVerifying}
+          className="mt-2 rounded bg-blue-600 px-4 py-2 text-white disabled:opacity-50"
+        >
+          {isVerifying ? "Verifying..." : "Verify PAN"}
+        </button>
+
+        {isVerified && (
+          <p className="mt-2 text-green-600 font-medium">
+            ✅ PAN Verified Successfully
+          </p>
+        )}
+
+        {error && (
+          <p className="mt-2 text-red-600">
+            {error}
+          </p>
+        )}
+      </div>
 
       <Input
         label="Aadhaar Number"
