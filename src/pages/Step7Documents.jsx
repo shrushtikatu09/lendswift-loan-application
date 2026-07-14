@@ -4,43 +4,46 @@ import FileUpload from "../components/common/FileUpload";
 
 function Step7Documents() {
   const {
-    register,
+    watch,
+    setValue,
     formState: { errors },
   } = useFormContext();
 
   return (
     <div>
-      <h2>Step 7 - Upload Documents</h2>
+      <h2 className="text-2xl font-semibold mb-6">
+        Step 7 - Upload Documents
+      </h2>
 
       <FileUpload
         label="PAN Card"
-        id="panCard"
         name="panCard"
-        register={register}
+        watch={watch}
+        setValue={setValue}
         error={errors.panCard?.message}
       />
 
       <FileUpload
         label="Aadhaar Card"
-        id="aadhaarCard"
         name="aadhaarCard"
-        register={register}
+        watch={watch}
+        setValue={setValue}
         error={errors.aadhaarCard?.message}
       />
 
       <FileUpload
         label="Salary Slip"
-        id="salarySlip"
         name="salarySlip"
-        register={register}
+        watch={watch}
+        setValue={setValue}
         error={errors.salarySlip?.message}
       />
 
       <FileUpload
         label="Bank Statement"
-        id="bankStatement"
         name="bankStatement"
-        register={register}
+        watch={watch}
+        setValue={setValue}
         error={errors.bankStatement?.message}
       />
     </div>
