@@ -8,20 +8,28 @@ import {
   BUSINESS_TYPES,
 } from "../data/employmentOptions";
 
+
 function Step5Employment() {
+
   const {
     register,
     watch,
-    formState: { errors },
+    formState:{
+      errors,
+    },
   } = useFormContext();
+
 
   const employmentType = watch("employmentType");
 
+
   return (
     <div>
+
       <h2 className="text-2xl font-semibold mb-6">
         Step 5 - Employment Details
       </h2>
+
 
       <Select
         label="Employment Type"
@@ -29,19 +37,20 @@ function Step5Employment() {
         name="employmentType"
         register={register}
         options={EMPLOYMENT_TYPES}
-        placeholder="Select Employment Type"
         error={errors.employmentType?.message}
       />
 
-      {/* Salaried */}
 
-      {employmentType === "salaried" && (
-        <>
+      {
+        employmentType === "salaried" && (
+          <>
+
           <Input
             label="Company Name"
             {...register("companyName")}
             error={errors.companyName?.message}
           />
+
 
           <Input
             label="Designation"
@@ -49,35 +58,48 @@ function Step5Employment() {
             error={errors.designation?.message}
           />
 
+
           <Input
             label="Monthly Salary"
             type="number"
-            {...register("monthlyIncome", {
-              valueAsNumber: true,
-            })}
+            {...register(
+              "monthlyIncome",
+              {
+                valueAsNumber:true
+              }
+            )}
             error={errors.monthlyIncome?.message}
           />
+
 
           <Input
             label="Years of Experience"
             type="number"
-            {...register("workExperience", {
-              valueAsNumber: true,
-            })}
+            {...register(
+              "workExperience",
+              {
+                valueAsNumber:true
+              }
+            )}
             error={errors.workExperience?.message}
           />
-        </>
-      )}
 
-      {/* Self Employed */}
+          </>
+        )
+      }
 
-      {employmentType === "self-employed" && (
-        <>
+
+
+      {
+        employmentType === "self-employed" && (
+          <>
+
           <Input
             label="Business Name"
             {...register("businessName")}
             error={errors.businessName?.message}
           />
+
 
           <Select
             label="Business Type"
@@ -87,50 +109,68 @@ function Step5Employment() {
             error={errors.businessType?.message}
           />
 
+
           <Input
             label="Annual Turnover"
             type="number"
-            {...register("annualTurnover", {
-              valueAsNumber: true,
-            })}
+            {...register(
+              "annualTurnover",
+              {
+                valueAsNumber:true
+              }
+            )}
             error={errors.annualTurnover?.message}
           />
+
 
           <Input
             label="Years In Business"
             type="number"
-            {...register("yearsInBusiness", {
-              valueAsNumber: true,
-            })}
+            {...register(
+              "yearsInBusiness",
+              {
+                valueAsNumber:true
+              }
+            )}
             error={errors.yearsInBusiness?.message}
           />
+
 
           <Input
             label="Monthly Income"
             type="number"
-            {...register("selfMonthlyIncome", {
-              valueAsNumber: true,
-            })}
+            {...register(
+              "selfMonthlyIncome",
+              {
+                valueAsNumber:true
+              }
+            )}
             error={errors.selfMonthlyIncome?.message}
           />
+
 
           <Input
             label="Office Address"
             {...register("officeAddress")}
             error={errors.officeAddress?.message}
           />
-        </>
-      )}
 
-      {/* Business Owner */}
+          </>
+        )
+      }
 
-      {employmentType === "business" && (
-        <>
+
+
+      {
+        employmentType === "business" && (
+          <>
+
           <Input
             label="Business Name"
             {...register("businessName")}
             error={errors.businessName?.message}
           />
+
 
           <Select
             label="Business Type"
@@ -140,23 +180,32 @@ function Step5Employment() {
             error={errors.businessType?.message}
           />
 
+
           <Input
             label="Annual Turnover"
             type="number"
-            {...register("annualTurnover", {
-              valueAsNumber: true,
-            })}
+            {...register(
+              "annualTurnover",
+              {
+                valueAsNumber:true
+              }
+            )}
             error={errors.annualTurnover?.message}
           />
+
 
           <Input
             label="Years In Business"
             type="number"
-            {...register("yearsInBusiness", {
-              valueAsNumber: true,
-            })}
+            {...register(
+              "yearsInBusiness",
+              {
+                valueAsNumber:true
+              }
+            )}
             error={errors.yearsInBusiness?.message}
           />
+
 
           <Input
             label="GST Number"
@@ -164,15 +213,21 @@ function Step5Employment() {
             error={errors.gstNumber?.message}
           />
 
+
           <Input
             label="Office Address"
             {...register("officeAddress")}
             error={errors.officeAddress?.message}
           />
-        </>
-      )}
+
+          </>
+        )
+      }
+
+
     </div>
   );
 }
+
 
 export default Step5Employment;

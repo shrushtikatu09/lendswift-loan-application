@@ -1,142 +1,208 @@
 import { useFormContext } from "react-hook-form";
 import { TOTAL_STEPS } from "../../config/formConfig";
 
+
 const STEP_FIELDS = {
-  1: [
-    "loanType",
-    "loanAmount",
-    "loanTenure",
-    "loanPurpose",
-    "referralCode",
-  ],
 
-  2: [
-    "fullName",
-    "email",
-    "mobile",
-    "dateOfBirth",
-    "gender",
-    "maritalStatus",
-  ],
+1:[
+"loanType",
+"loanAmount",
+"loanTenure",
+"loanPurpose",
+],
 
-  3: [
-    "panNumber",
-    "aadhaarNumber",
-    "consent",
-  ],
 
-  4: [
-    "addressLine1",
-    "city",
-    "state",
-    "pinCode",
-    "addressType",
-  ],
+2:[
+"fullName",
+"email",
+"mobile",
+"dateOfBirth",
+"gender",
+"maritalStatus",
+],
 
-  6: [
-    "hasCoApplicant",
-    "coApplicantName",
-    "relationship",
-    "coApplicantMobile",
-    "coApplicantIncome",
-  ],
 
-  7: [
-    "panCard",
-    "aadhaarCard",
-    "salarySlip",
-    "bankStatement",
-  ],
+3:[
+"panNumber",
+"aadhaarNumber",
+"consent",
+],
+
+
+4:[
+"addressLine1",
+"city",
+"state",
+"pinCode",
+"addressType",
+],
+
+
+6:[
+"hasCoApplicant",
+"coApplicantName",
+"relationship",
+"coApplicantMobile",
+"coApplicantIncome",
+],
+
+
+7:[
+"panCard",
+"aadhaarCard",
+"salarySlip",
+"bankStatement",
+],
+
+
 };
 
-function StepNavigation({ currentStep, setCurrentStep }) {
-  const {
-    trigger,
-    watch,
-  } = useFormContext();
 
-  const handleNext = async () => {
-    let fields = STEP_FIELDS[currentStep] || [];
+function StepNavigation({
+currentStep,
+setCurrentStep
+}){
 
-    if (currentStep === 5) {
-      const employmentType = watch("employmentType");
 
-      switch (employmentType) {
-        case "salaried":
-          fields = [
-            "employmentType",
-            "companyName",
-            "designation",
-            "monthlyIncome",
-            "workExperience",
-          ];
-          break;
+const {
+trigger,
+watch,
+setFocus
+}=useFormContext();
 
-        case "self-employed":
-          fields = [
-            "employmentType",
-            "businessName",
-            "businessType",
-            "annualTurnover",
-            "yearsInBusiness",
-            "selfMonthlyIncome",
-            "officeAddress",
-          ];
-          break;
 
-        case "business":
-          fields = [
-            "employmentType",
-            "businessName",
-            "businessType",
-            "annualTurnover",
-            "yearsInBusiness",
-            "gstNumber",
-            "officeAddress",
-          ];
-          break;
 
-        default:
-          fields = ["employmentType"];
-      }
-    }
+const handleNext=async()=>{
 
-    const isValid = await trigger(fields);
 
-    console.log("Current Step :", currentStep);
-    console.log("Employment :", watch("employmentType"));
-    console.log("Fields :", fields);
-    console.log("Valid :", isValid);
+let fields=STEP_FIELDS[currentStep] || [];
 
-    if (isValid && currentStep < TOTAL_STEPS) {
-      setCurrentStep((prev) => prev + 1);
-    }
-  };
 
-  const handlePrevious = () => {
-    if (currentStep > 1) {
-      setCurrentStep((prev) => prev - 1);
-    }
-  };
+if(currentStep===5){
 
-  return (
-    <div className="flex justify-between mt-6">
-      <button
-        type="button"
-        onClick={handlePrevious}
-        disabled={currentStep === 1}
-      >
-        Previous
-      </button>
+const employmentType=watch(
+"employmentType"
+);
 
-      <button
-        type="button"
-        onClick={handleNext}
-      >
-        {currentStep === TOTAL_STEPS ? "Submit" : "Next"}
-      </button>
-    </div>
-  );
+
+if(employmentType==="salaried"){
+
+fields=[
+"employmentType",
+"companyName",
+"designation",
+"monthlyIncome",
+"workExperience",
+];
+
 }
+
+
+else if(employmentType==="self-employed"){
+
+fields=[
+"employmentType",
+"businessName",
+"businessType",
+"annualTurnover",
+"yearsInBusiness",
+"selfMonthlyIncome",
+"officeAddress",
+];
+
+}
+
+
+else if(employmentType==="business"){
+
+fields=[
+"employmentType",
+"businessName",
+"businessType",
+"annualTurnover",
+"yearsInBusiness",
+"gstNumber",
+"officeAddress",
+];
+
+}
+
+
+else{
+
+fields=[
+"employmentType"
+];
+
+}
+
+}
+
+
+
+const valid=await trigger(fields);
+
+
+if(!valid){
+
+setFocus(fields[0]);
+
+return;
+
+}
+
+
+
+if(currentStep<TOTAL_STEPS){
+
+setCurrentStep(
+prev=>prev+1
+);
+
+}
+
+};
+
+
+
+return (
+
+<div className="flex justify-between mt-6">
+
+
+<button
+type="button"
+onClick={()=>
+setCurrentStep(
+prev=>prev-1
+)
+}
+disabled={currentStep===1}
+>
+Previous
+</button>
+
+
+
+<button
+type="button"
+onClick={handleNext}
+>
+{
+currentStep===TOTAL_STEPS
+?
+"Submit"
+:
+"Next"
+}
+</button>
+
+
+</div>
+
+);
+
+}
+
 
 export default StepNavigation;

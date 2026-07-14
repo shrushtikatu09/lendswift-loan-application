@@ -36,13 +36,17 @@ function Wizard() {
 
       <h3>{STEP_TITLES[currentStep - 1]}</h3>
 
-      <ProgressBar currentStep={currentStep} />
+      <ProgressBar
+        currentStep={currentStep}
+        totalSteps={steps.length}
+      />
 
       <CurrentStepComponent />
 
       <StepNavigation
         currentStep={currentStep}
         setCurrentStep={setCurrentStep}
+        totalSteps={steps.length}
       />
     </div>
   );
