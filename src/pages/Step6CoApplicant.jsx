@@ -3,6 +3,7 @@ import { useFormContext } from "react-hook-form";
 import Input from "../components/common/Input";
 import RadioGroup from "../components/common/RadioGroup";
 import Select from "../components/common/Select";
+import Checkbox from "../components/common/Checkbox";
 
 import { RELATIONSHIP_OPTIONS } from "../data/coApplicantOptions";
 
@@ -17,15 +18,23 @@ function Step6CoApplicant() {
 
   return (
     <div>
-      <h2>Step 6 - Co-Applicant Details</h2>
+      <h2 className="text-2xl font-semibold mb-6">
+        Step 6 - Co-Applicant Details
+      </h2>
 
       <RadioGroup
         label="Do you have a Co-Applicant?"
         name="hasCoApplicant"
         register={register}
         options={[
-          { label: "Yes", value: "yes" },
-          { label: "No", value: "no" },
+          {
+            label: "Yes",
+            value: "yes",
+          },
+          {
+            label: "No",
+            value: "no",
+          },
         ]}
         error={errors.hasCoApplicant?.message}
       />
@@ -51,10 +60,18 @@ function Step6CoApplicant() {
           />
 
           <Input
+            label="PAN Number"
+            id="coApplicantPAN"
+            placeholder="ABCDE1234F"
+            error={errors.coApplicantPAN?.message}
+            {...register("coApplicantPAN")}
+          />
+
+          <Input
             label="Mobile Number"
             id="coApplicantMobile"
             type="tel"
-            placeholder="Enter Mobile Number"
+            placeholder="9876543210"
             error={errors.coApplicantMobile?.message}
             {...register("coApplicantMobile")}
           />
@@ -68,6 +85,14 @@ function Step6CoApplicant() {
             {...register("coApplicantIncome", {
               valueAsNumber: true,
             })}
+          />
+
+          <Checkbox
+            id="coApplicantConsent"
+            name="coApplicantConsent"
+            label="I confirm that the Co-Applicant has given consent to share their information."
+            register={register}
+            error={errors.coApplicantConsent?.message}
           />
         </>
       )}

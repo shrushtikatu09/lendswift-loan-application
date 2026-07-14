@@ -6,18 +6,21 @@ import { loanApplicationSchema } from "../schemas/loanApplicationSchema";
 export function useLoanForm() {
   return useForm({
     resolver: zodResolver(loanApplicationSchema),
-
     mode: "onTouched",
 
     defaultValues: {
-      // Step 1
+      // =========================
+      // Step 1 - Loan Details
+      // =========================
       loanType: "",
       loanAmount: "",
       loanTenure: "",
       loanPurpose: "",
       referralCode: "",
 
-      // Step 2
+      // =========================
+      // Step 2 - Personal Details
+      // =========================
       fullName: "",
       email: "",
       mobile: "",
@@ -25,12 +28,16 @@ export function useLoanForm() {
       gender: "",
       maritalStatus: "",
 
-      // Step 3
+      // =========================
+      // Step 3 - KYC
+      // =========================
       panNumber: "",
       aadhaarNumber: "",
       consent: false,
 
-      // Step 4
+      // =========================
+      // Step 4 - Address
+      // =========================
       addressLine1: "",
       addressLine2: "",
       city: "",
@@ -38,20 +45,42 @@ export function useLoanForm() {
       pinCode: "",
       addressType: "",
 
-      // Step 5
+      // =========================
+      // Step 5 - Employment
+      // =========================
       employmentType: "",
+
+      // Salaried
       companyName: "",
+      designation: "",
       monthlyIncome: "",
       workExperience: "",
 
-      // Step 6
+      // Self Employed / Business
+      businessName: "",
+      businessType: "",
+      annualTurnover: "",
+      yearsInBusiness: "",
+      selfMonthlyIncome: "",
+      officeAddress: "",
+
+      // Business Owner
+      gstNumber: "",
+
+      // =========================
+      // Step 6 - Co Applicant
+      // =========================
       hasCoApplicant: "",
       coApplicantName: "",
       relationship: "",
+      coApplicantPAN: "",
       coApplicantMobile: "",
       coApplicantIncome: "",
+      coApplicantConsent: false,
 
-      // Step 7
+      // =========================
+      // Step 7 - Documents
+      // =========================
       panCard: null,
       aadhaarCard: null,
       salarySlip: null,

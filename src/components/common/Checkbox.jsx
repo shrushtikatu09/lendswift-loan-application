@@ -4,16 +4,22 @@ function Checkbox({
   register,
   name,
   error,
+  disabled = false,
 }) {
   return (
     <div className="mb-4">
-      <label htmlFor={id} className="flex items-center gap-2">
+      <label
+        htmlFor={id}
+        className="flex items-start gap-2 cursor-pointer"
+      >
         <input
           id={id}
           type="checkbox"
+          disabled={disabled}
           {...register(name)}
         />
-        {label}
+
+        <span>{label}</span>
       </label>
 
       {error && (

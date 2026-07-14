@@ -9,7 +9,11 @@ export const step6Schema = z.object({
 
   relationship: z.string().optional(),
 
+  coApplicantPAN: z.string().optional(),
+
   coApplicantMobile: z.string().optional(),
 
-  coApplicantIncome: z.number().optional(),
+  coApplicantIncome: z.coerce.number().optional(),
+
+  coApplicantConsent: z.boolean().optional(),
 });
