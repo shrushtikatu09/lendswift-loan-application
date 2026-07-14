@@ -1,11 +1,17 @@
 import { z } from "zod";
 
+const REQUIRED_FILE = z
+  .any()
+  .refine((file) => file !== null && file !== undefined, {
+    message: "This document is required",
+  });
+
 export const step7Schema = z.object({
-  panCard: z.any().optional(),
+  panCard: REQUIRED_FILE,
 
-  aadhaarCard: z.any().optional(),
+  aadhaarCard: REQUIRED_FILE,
 
-  salarySlip: z.any().optional(),
+  salarySlip: REQUIRED_FILE,
 
-  bankStatement: z.any().optional(),
+  bankStatement: REQUIRED_FILE,
 });
