@@ -6,6 +6,7 @@ import { loanApplicationSchema } from "../schemas/loanApplicationSchema";
 export function useLoanForm() {
   return useForm({
     resolver: zodResolver(loanApplicationSchema),
+
     mode: "onTouched",
 
     defaultValues: {
@@ -85,6 +86,19 @@ export function useLoanForm() {
       aadhaarCard: null,
       salarySlip: null,
       bankStatement: null,
+
+      // =========================
+      // Step 7 - Signature
+      // =========================
+      signature: "",
+
+      // =========================
+      // Step 8 - Final Consents
+      // =========================
+      declarationConsent: false,
+      creditCheckConsent: false,
+      termsConsent: false,
+      communicationConsent: false,
     },
   });
 }
