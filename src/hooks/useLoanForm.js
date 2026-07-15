@@ -71,7 +71,7 @@ export function useLoanForm() {
       // =========================
       // Step 6 - Co Applicant
       // =========================
-      hasCoApplicant: "",
+      
       coApplicantName: "",
       relationship: "",
       coApplicantPAN: "",

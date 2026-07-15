@@ -38,6 +38,7 @@ const STEP_FIELDS = {
     "relationship",
     "coApplicantMobile",
     "coApplicantIncome",
+    "coApplicantConsent",
   ],
 
   7: [
@@ -105,7 +106,20 @@ function StepNavigation({
   };
 
   const handleNext = async () => {
-    const fields = getStepFields();
+    let fields = getStepFields();
+    if (currentStep === 6) {
+  const loanType = watch("loanType");
+  const loanAmount = Number(watch("loanAmount") || 0);
+
+  const requiresCoApplicant =
+    loanType === "home" ||
+    (loanType === "personal" && loanAmount > 500000) ||
+    (loanType === "business" && loanAmount > 2000000);
+
+  if (!requiresCoApplicant) {
+    fields = [];
+  }
+}
 
     const valid = await trigger(fields);
 
