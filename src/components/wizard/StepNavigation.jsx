@@ -107,19 +107,20 @@ function StepNavigation({
 
   const handleNext = async () => {
     let fields = getStepFields();
+
     if (currentStep === 6) {
-  const loanType = watch("loanType");
-  const loanAmount = Number(watch("loanAmount") || 0);
+      const loanType = watch("loanType");
+      const loanAmount = Number(watch("loanAmount") || 0);
 
-  const requiresCoApplicant =
-    loanType === "home" ||
-    (loanType === "personal" && loanAmount > 500000) ||
-    (loanType === "business" && loanAmount > 2000000);
+      const requiresCoApplicant =
+        loanType === "home" ||
+        (loanType === "personal" && loanAmount > 500000) ||
+        (loanType === "business" && loanAmount > 2000000);
 
-  if (!requiresCoApplicant) {
-    fields = [];
-  }
-}
+      if (!requiresCoApplicant) {
+        fields = [];
+      }
+    }
 
     const valid = await trigger(fields);
 
@@ -142,23 +143,26 @@ function StepNavigation({
   };
 
   return (
-    <div className="flex justify-between mt-8">
+    <div className="mt-8 flex justify-between">
       <button
         type="button"
         onClick={handlePrevious}
         disabled={currentStep === 1}
-        className="px-5 py-2 rounded-lg bg-gray-200 disabled:opacity-50"
+        className="rounded-lg bg-gray-200 px-5 py-2 disabled:opacity-50"
       >
         Previous
       </button>
 
-      <button
-        type="button"
-        onClick={handleNext}
-        className="px-6 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
-      >
-        {currentStep === TOTAL_STEPS ? "Submit" : "Next"}
-      </button>
+      {/* Step 8 par Next/Submit button hide rahega */}
+      {currentStep !== TOTAL_STEPS && (
+        <button
+          type="button"
+          onClick={handleNext}
+          className="rounded-lg bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
+        >
+          Next
+        </button>
+      )}
     </div>
   );
 }
