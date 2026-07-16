@@ -96,7 +96,11 @@ function Step8Review() {
 
       </div>
 
-      <EMISummaryCard />
+      <EMISummaryCard
+  loanType={data.loanType}
+  loanAmount={data.loanAmount}
+  loanTenure={data.loanTenure}
+/>
 
       <SignaturePad
         value={signature}
