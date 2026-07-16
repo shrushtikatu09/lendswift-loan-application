@@ -71,7 +71,7 @@ export function useLoanForm() {
       // =========================
       // Step 6 - Co Applicant
       // =========================
-      
+      hasCoApplicant: "",
       coApplicantName: "",
       relationship: "",
       coApplicantPAN: "",
@@ -87,8 +87,15 @@ export function useLoanForm() {
       salarySlip: null,
       bankStatement: null,
 
+      // NEW DOCUMENTS
+      itrDocument: null,
+      propertyDocuments: null,
+      businessCertificate: null,
+      gstReturns: null,
+      photograph: null,
+
       // =========================
-      // Step 7 - Signature
+      // Signature
       // =========================
       signature: "",
 
