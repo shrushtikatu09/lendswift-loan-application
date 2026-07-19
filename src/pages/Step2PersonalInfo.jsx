@@ -15,11 +15,27 @@ function Step2PersonalInfo() {
       <h2>Step 2 - Personal Information</h2>
 
       <Input
-        label="Full Name"
+        label="Full Name (as per PAN)"
         id="fullName"
         placeholder="Enter Full Name"
         error={errors.fullName?.message}
         {...register("fullName")}
+      />
+
+      <Input
+        label="Father's Name"
+        id="fatherName"
+        placeholder="Enter Father's Name"
+        error={errors.fatherName?.message}
+        {...register("fatherName")}
+      />
+
+      <Input
+        label="Mother's Name"
+        id="motherName"
+        placeholder="Enter Mother's Name"
+        error={errors.motherName?.message}
+        {...register("motherName")}
       />
 
       <Input
@@ -41,6 +57,15 @@ function Step2PersonalInfo() {
       />
 
       <Input
+        label="Alternate Mobile Number (Optional)"
+        id="alternateMobile"
+        type="tel"
+        placeholder="Enter Alternate Mobile Number"
+        error={errors.alternateMobile?.message}
+        {...register("alternateMobile")}
+      />
+
+      <Input
         label="Date of Birth"
         id="dateOfBirth"
         type="date"
@@ -53,18 +78,9 @@ function Step2PersonalInfo() {
         name="gender"
         register={register}
         options={[
-          {
-            label: "Male",
-            value: "male",
-          },
-          {
-            label: "Female",
-            value: "female",
-          },
-          {
-            label: "Other",
-            value: "other",
-          },
+          { label: "Male", value: "male" },
+          { label: "Female", value: "female" },
+          { label: "Other", value: "other" },
         ]}
         error={errors.gender?.message}
       />
@@ -76,22 +92,10 @@ function Step2PersonalInfo() {
         placeholder="Select Marital Status"
         register={register}
         options={[
-          {
-            label: "Single",
-            value: "single",
-          },
-          {
-            label: "Married",
-            value: "married",
-          },
-          {
-            label: "Divorced",
-            value: "divorced",
-          },
-          {
-            label: "Widowed",
-            value: "widowed",
-          },
+          { label: "Single", value: "single" },
+          { label: "Married", value: "married" },
+          { label: "Divorced", value: "divorced" },
+          { label: "Widowed", value: "widowed" },
         ]}
         error={errors.maritalStatus?.message}
       />
