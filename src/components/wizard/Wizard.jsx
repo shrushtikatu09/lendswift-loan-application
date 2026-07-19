@@ -37,34 +37,60 @@ function Wizard() {
     steps[currentStep - 1] ?? Step1LoanType;
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8">
-      <div className="space-y-2">
-        <h2 className="text-3xl font-bold">
-          Loan Application Wizard
-        </h2>
+    <div className="min-h-screen bg-slate-100 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-6xl">
 
-        <p className="text-gray-500">
-          Complete all required information to submit your
-          application.
-        </p>
+        {/* Page Header */}
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+            LendSwift Loan Application
+          </h1>
 
-        <h3 className="text-xl font-semibold">
-          {STEP_TITLES[currentStep - 1]}
-        </h3>
+          <p className="mt-3 text-base text-slate-600">
+            Complete your loan application securely. All information is encrypted
+            and reviewed before submission.
+          </p>
+        </div>
+
+        {/* Main Card */}
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl">
+
+          {/* Card Header */}
+          <div className="border-b border-slate-200 bg-slate-50 px-8 py-6">
+            <p className="text-sm font-medium uppercase tracking-wide text-blue-700">
+              Application Progress
+            </p>
+
+            <h2 className="mt-2 text-2xl font-bold text-slate-900">
+              {STEP_TITLES[currentStep - 1]}
+            </h2>
+
+            <p className="mt-1 text-sm text-slate-500">
+              Step {currentStep} of {totalSteps}
+            </p>
+          </div>
+
+          {/* Progress */}
+          <div className="px-8 pt-6">
+            <ProgressBar currentStep={currentStep} />
+          </div>
+
+          {/* Step Content */}
+          <div className="px-8 py-8">
+            <CurrentStepComponent />
+          </div>
+
+          {/* Navigation */}
+          <div className="border-t border-slate-200 bg-slate-50 px-8 py-5">
+            <StepNavigation
+              currentStep={currentStep}
+              totalSteps={totalSteps}
+              setCurrentStep={setCurrentStep}
+            />
+          </div>
+
+        </div>
       </div>
-
-      <ProgressBar
-        currentStep={currentStep}
-        totalSteps={totalSteps}
-      />
-
-      <CurrentStepComponent />
-
-      <StepNavigation
-        currentStep={currentStep}
-        totalSteps={totalSteps}
-        setCurrentStep={setCurrentStep}
-      />
     </div>
   );
 }
