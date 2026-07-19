@@ -71,15 +71,15 @@ export function useLoanForm() {
       // Salaried
       companyName: "",
       designation: "",
-      monthlyIncome: "",
-      workExperience: "",
+      monthlyIncome: undefined,
+      workExperience: undefined,
 
       // Self Employed / Business
       businessName: "",
       businessType: "",
-      annualTurnover: "",
-      yearsInBusiness: "",
-      selfMonthlyIncome: "",
+      annualTurnover: undefined,
+      yearsInBusiness: undefined,
+      selfMonthlyIncome: undefined,
       officeAddress: "",
 
       // Business Owner
@@ -93,7 +93,7 @@ export function useLoanForm() {
       relationship: "",
       coApplicantPAN: "",
       coApplicantMobile: "",
-      coApplicantIncome: "",
+      coApplicantIncome: undefined,
       coApplicantConsent: false,
 
       // =========================
