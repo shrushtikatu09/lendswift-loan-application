@@ -11,8 +11,11 @@ const STEP_FIELDS = {
 
   2: [
     "fullName",
+    "fatherName",
+    "motherName",
     "email",
     "mobile",
+    "alternateMobile",
     "dateOfBirth",
     "gender",
     "maritalStatus",
@@ -32,6 +35,13 @@ const STEP_FIELDS = {
     "state",
     "pinCode",
     "addressType",
+
+    "sameAsCurrentAddress",
+
+    "permanentAddressLine1",
+    "permanentCity",
+    "permanentState",
+    "permanentPinCode",
   ],
 
   6: [
@@ -110,14 +120,43 @@ function StepNavigation({
   const handleNext = async () => {
     let fields = getStepFields();
 
+    // =========================
+    // Step 4 Conditional Validation
+    // =========================
+
+    if (currentStep === 4) {
+      const sameAsCurrentAddress = watch(
+        "sameAsCurrentAddress"
+      );
+
+      if (sameAsCurrentAddress) {
+        fields = [
+          "addressLine1",
+          "city",
+          "state",
+          "pinCode",
+          "addressType",
+          "sameAsCurrentAddress",
+        ];
+      }
+    }
+
+    // =========================
+    // Step 6 Conditional Validation
+    // =========================
+
     if (currentStep === 6) {
       const loanType = watch("loanType");
-      const loanAmount = Number(watch("loanAmount") || 0);
+      const loanAmount = Number(
+        watch("loanAmount") || 0
+      );
 
       const requiresCoApplicant =
         loanType === "home" ||
-        (loanType === "personal" && loanAmount > 500000) ||
-        (loanType === "business" && loanAmount > 2000000);
+        (loanType === "personal" &&
+          loanAmount > 500000) ||
+        (loanType === "business" &&
+          loanAmount > 2000000);
 
       if (!requiresCoApplicant) {
         fields = [];
@@ -130,11 +169,13 @@ function StepNavigation({
       if (fields.length > 0) {
         setFocus(fields[0]);
       }
+
       return;
     }
 
     if (currentStep < TOTAL_STEPS) {
       setCurrentStep((prev) => prev + 1);
+
       window.scrollTo({
         top: 0,
         behavior: "smooth",

@@ -39,12 +39,11 @@ export function useLoanForm() {
       aadhaarNumber: "",
       consent: false,
 
-      // Verification Status
       panVerified: false,
       aadhaarVerified: false,
 
       // =========================
-      // Step 4 - Address
+      // Step 4 - Current Address
       // =========================
       addressLine1: "",
       addressLine2: "",
@@ -52,6 +51,17 @@ export function useLoanForm() {
       state: "",
       pinCode: "",
       addressType: "",
+
+      // =========================
+      // Permanent Address
+      // =========================
+      sameAsCurrentAddress: false,
+
+      permanentAddressLine1: "",
+      permanentAddressLine2: "",
+      permanentCity: "",
+      permanentState: "",
+      permanentPinCode: "",
 
       // =========================
       // Step 5 - Employment
@@ -64,7 +74,7 @@ export function useLoanForm() {
       monthlyIncome: "",
       workExperience: "",
 
-      // Self Employed
+      // Self Employed / Business
       businessName: "",
       businessType: "",
       annualTurnover: "",
