@@ -133,36 +133,84 @@ function StepNavigation({
 
     if (currentStep < TOTAL_STEPS) {
       setCurrentStep((prev) => prev + 1);
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
     }
   };
 
   const handlePrevious = () => {
     if (currentStep > 1) {
       setCurrentStep((prev) => prev - 1);
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
     }
   };
 
   return (
-    <div className="mt-8 flex justify-between">
-      <button
-        type="button"
-        onClick={handlePrevious}
-        disabled={currentStep === 1}
-        className="rounded-lg bg-gray-200 px-5 py-2 disabled:opacity-50"
-      >
-        Previous
-      </button>
-
-      {/* Step 8 par Next/Submit button hide rahega */}
-      {currentStep !== TOTAL_STEPS && (
+    <div className="mt-10 border-t border-slate-200 pt-6">
+      <div className="flex items-center justify-between">
         <button
           type="button"
-          onClick={handleNext}
-          className="rounded-lg bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
+          onClick={handlePrevious}
+          disabled={currentStep === 1}
+          className="
+            min-w-[130px]
+            rounded-lg
+            border
+            border-slate-300
+            bg-white
+            px-6
+            py-3
+            text-sm
+            font-semibold
+            text-slate-700
+            shadow-sm
+            transition-all
+            duration-200
+            hover:bg-slate-100
+            hover:shadow
+            focus:outline-none
+            focus:ring-2
+            focus:ring-blue-200
+            disabled:cursor-not-allowed
+            disabled:opacity-50
+          "
         >
-          Next
+          ← Previous
         </button>
-      )}
+
+        {currentStep !== TOTAL_STEPS && (
+          <button
+            type="button"
+            onClick={handleNext}
+            className="
+              min-w-[140px]
+              rounded-lg
+              bg-[#1F4E79]
+              px-6
+              py-3
+              text-sm
+              font-semibold
+              text-white
+              shadow-md
+              transition-all
+              duration-200
+              hover:bg-[#163A5C]
+              hover:shadow-lg
+              focus:outline-none
+              focus:ring-2
+              focus:ring-blue-300
+            "
+          >
+            Next →
+          </button>
+        )}
+      </div>
     </div>
   );
 }

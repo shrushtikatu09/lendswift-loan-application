@@ -129,6 +129,7 @@ function Step8Review() {
       <SuccessModal
         open={submitted}
         onClose={() => setSubmitted(false)}
+        applicationData={data}
       />
 
     </div>
