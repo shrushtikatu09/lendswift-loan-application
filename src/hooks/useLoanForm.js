@@ -23,8 +23,11 @@ export function useLoanForm() {
       // Step 2 - Personal Details
       // =========================
       fullName: "",
+      fatherName: "",
+      motherName: "",
       email: "",
       mobile: "",
+      alternateMobile: "",
       dateOfBirth: "",
       gender: "",
       maritalStatus: "",
@@ -35,6 +38,10 @@ export function useLoanForm() {
       panNumber: "",
       aadhaarNumber: "",
       consent: false,
+
+      // Verification Status
+      panVerified: false,
+      aadhaarVerified: false,
 
       // =========================
       // Step 4 - Address
@@ -57,7 +64,7 @@ export function useLoanForm() {
       monthlyIncome: "",
       workExperience: "",
 
-      // Self Employed / Business
+      // Self Employed
       businessName: "",
       businessType: "",
       annualTurnover: "",
@@ -87,7 +94,6 @@ export function useLoanForm() {
       salarySlip: null,
       bankStatement: null,
 
-      // NEW DOCUMENTS
       itrDocument: null,
       propertyDocuments: null,
       businessCertificate: null,

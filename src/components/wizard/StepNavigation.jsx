@@ -22,6 +22,8 @@ const STEP_FIELDS = {
     "panNumber",
     "aadhaarNumber",
     "consent",
+    "panVerified",
+    "aadhaarVerified",
   ],
 
   4: [

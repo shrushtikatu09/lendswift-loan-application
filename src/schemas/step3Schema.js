@@ -11,6 +11,7 @@ export const step3Schema = z.object({
 
   aadhaarNumber: z
     .string()
+    .min(1, "Aadhaar Number is required")
     .regex(
       /^\d{12}$/,
       "Aadhaar must contain exactly 12 digits."
@@ -19,6 +20,19 @@ export const step3Schema = z.object({
   consent: z.literal(true, {
     errorMap: () => ({
       message: "You must provide consent to continue.",
+    }),
+  }),
+
+  // Verification Status
+  panVerified: z.literal(true, {
+    errorMap: () => ({
+      message: "Please verify your PAN before continuing.",
+    }),
+  }),
+
+  aadhaarVerified: z.literal(true, {
+    errorMap: () => ({
+      message: "Please verify your Aadhaar before continuing.",
     }),
   }),
 });
