@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
 import { useDropzone } from "react-dropzone";
 
 import ErrorMessage from "./ErrorMessage";
@@ -18,11 +24,17 @@ function FileUpload({
     "application/pdf": [".pdf"],
   },
 }) {
-  const [uploadError, setUploadError] = useState("");
-  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadError, setUploadError] =
+    useState("");
+
+  const [uploadProgress, setUploadProgress] =
+    useState(0);
+
   const [uploadStatus, setUploadStatus] =
     useState("Pending");
-  const [sizeInfo, setSizeInfo] = useState(null);
+
+  const [sizeInfo, setSizeInfo] =
+    useState(null);
 
   const file = watch(name);
 
@@ -46,9 +58,20 @@ function FileUpload({
     };
   }, [preview]);
 
+  useEffect(() => {
+    if (!file) {
+      setUploadStatus("Pending");
+      setUploadProgress(0);
+      return;
+    }
+
+    setUploadStatus("Uploaded");
+    setUploadProgress(100);
+  }, [file]);
+
   const simulateUpload = () => {
-    setUploadProgress(0);
     setUploadStatus("Uploading");
+    setUploadProgress(0);
 
     let progress = 0;
 
@@ -62,11 +85,14 @@ function FileUpload({
 
         setUploadStatus("Uploaded");
       }
-    }, 120);
+    }, 100);
   };
 
   const onDrop = useCallback(
-    async (acceptedFiles, rejectedFiles) => {
+    async (
+      acceptedFiles,
+      rejectedFiles
+    ) => {
       setUploadError("");
 
       if (rejectedFiles.length > 0) {
@@ -128,9 +154,9 @@ function FileUpload({
       simulateUpload();
 
       setValue(name, finalFile, {
-        shouldValidate: true,
         shouldDirty: true,
         shouldTouch: true,
+        shouldValidate: true,
       });
     },
     [name, setValue]
@@ -141,10 +167,10 @@ function FileUpload({
     getInputProps,
     isDragActive,
   } = useDropzone({
-    multiple: false,
-    maxSize: MAX_SIZE,
-    accept,
     onDrop,
+    multiple: false,
+    accept,
+    maxSize: MAX_SIZE,
   });
 
   const removeFile = () => {
@@ -156,9 +182,9 @@ function FileUpload({
 
     setUploadError("");
 
-    setUploadProgress(0);
-
     setUploadStatus("Pending");
+
+    setUploadProgress(0);
 
     setSizeInfo(null);
   };
@@ -169,125 +195,116 @@ function FileUpload({
         {label}
       </label>
 
-      <div
-        {...getRootProps()}
-        className={`cursor-pointer rounded-lg border-2 border-dashed p-6 text-center transition ${
-          isDragActive
-            ? "border-blue-600 bg-blue-50"
-            : "border-gray-300"
-        }`}
-      >
-        <input {...getInputProps()} />
+      {!file && (
+        <div
+          {...getRootProps()}
+          className={`cursor-pointer rounded-xl border-2 border-dashed p-8 text-center transition-all ${
+            isDragActive
+              ? "border-blue-600 bg-blue-50"
+              : "border-gray-300 hover:border-blue-500 hover:bg-gray-50"
+          }`}
+        >
+          <input {...getInputProps()} />
 
-        <p className="font-medium">
-          Drag & Drop file here
-        </p>
+          <div className="text-4xl">
+            📤
+          </div>
 
-        <p className="mt-2 text-sm text-gray-500">
-          or Click to Browse
-        </p>
+          <p className="mt-3 font-semibold">
+            Click or Drag & Drop
+          </p>
 
-        <p className="mt-2 text-xs text-gray-400">
-          JPG • PNG • PDF (Max 5 MB)
-        </p>
-      </div>
+          <p className="mt-1 text-sm text-gray-500">
+            JPG • PNG • PDF
+          </p>
+
+          <p className="text-xs text-gray-400">
+            Max Size 5 MB
+          </p>
+        </div>
+      )}
             {file && (
-        <div className="mt-4 rounded-lg border p-4">
-          {preview ? (
-            <img
-              src={preview}
-              alt="Preview"
-              className="mb-4 h-40 rounded border object-contain"
-            />
-          ) : (
-            <div className="mb-4 rounded bg-gray-100 p-3 text-center">
-              <div className="text-4xl">📄</div>
-
-              <p className="mt-2 text-sm text-gray-600">
-                PDF Document
-              </p>
-            </div>
-          )}
-
-          <div className="space-y-2">
-            <p className="font-medium break-all">
-              {file.name}
-            </p>
-
-            <p className="text-sm text-gray-500">
-              Current Size :{" "}
-              {(file.size / 1024 / 1024).toFixed(2)} MB
-            </p>
-
-            {sizeInfo && (
-              <>
-                <p className="text-sm text-gray-500">
-                  Original Size :{" "}
-                  {(
-                    sizeInfo.originalSize /
-                    1024 /
-                    1024
-                  ).toFixed(2)}{" "}
-                  MB
-                </p>
-
-                <p className="text-sm text-green-600 font-medium">
-                  Compressed Size :{" "}
-                  {(
-                    sizeInfo.compressedSize /
-                    1024 /
-                    1024
-                  ).toFixed(2)}{" "}
-                  MB
-                </p>
-              </>
+        <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="flex items-start gap-4">
+            {preview ? (
+              <img
+                src={preview}
+                alt="Preview"
+                className="h-24 w-24 rounded-lg border object-cover"
+              />
+            ) : (
+              <div className="flex h-24 w-24 items-center justify-center rounded-lg border bg-slate-100 text-4xl">
+                📄
+              </div>
             )}
 
-            <div className="mt-3">
-              <div className="flex items-center justify-between text-sm">
-                <span>
-                  Status :
-                  <span
-                    className={`ml-2 font-semibold ${
-                      uploadStatus === "Uploaded"
-                        ? "text-green-600"
-                        : uploadStatus === "Uploading"
-                        ? "text-blue-600"
-                        : "text-gray-600"
-                    }`}
-                  >
-                    {uploadStatus}
-                  </span>
+            <div className="flex-1">
+              <div className="flex items-center justify-between">
+                <h4 className="max-w-[260px] truncate font-semibold">
+                  {file.name}
+                </h4>
+
+                <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
+                  ✓ Uploaded
                 </span>
-
-                <span>{uploadProgress}%</span>
               </div>
 
-              <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-gray-200">
-                <div
-                  className="h-full rounded-full bg-blue-600 transition-all duration-200"
-                  style={{
-                    width: `${uploadProgress}%`,
-                  }}
-                />
+              <p className="mt-2 text-sm text-slate-500">
+                Size :
+                {" "}
+                {file?.size
+                  ? (file.size / 1024 / 1024).toFixed(2)
+                  : "0.00"}{" "}
+                MB
+              </p>
+
+              {sizeInfo && (
+                <p className="text-xs text-slate-400">
+                  Compressed from{" "}
+                  {sizeInfo.originalSize
+                    ? (
+                        sizeInfo.originalSize /
+                        1024 /
+                        1024
+                      ).toFixed(2)
+                    : "0.00"}{" "}
+                  MB
+                </p>
+              )}
+
+              <div className="mt-4">
+                <div className="mb-1 flex justify-between text-xs text-slate-500">
+                  <span>{uploadStatus}</span>
+
+                  <span>{uploadProgress}%</span>
+                </div>
+
+                <div className="h-2 overflow-hidden rounded-full bg-slate-200">
+                  <div
+                    className="h-full rounded-full bg-blue-600 transition-all duration-300"
+                    style={{
+                      width: `${uploadProgress}%`,
+                    }}
+                  />
+                </div>
               </div>
+
+              <button
+                type="button"
+                onClick={removeFile}
+                className="mt-4 rounded-md border border-red-200 px-3 py-1 text-sm font-medium text-red-600 transition hover:bg-red-50"
+              >
+                Remove File
+              </button>
             </div>
-
-            <button
-              type="button"
-              onClick={removeFile}
-              className="mt-4 font-semibold text-red-600 hover:text-red-700"
-            >
-              Remove File
-            </button>
           </div>
         </div>
       )}
 
       {uploadError && (
         <p
-          className="mt-2 text-sm text-red-600"
           role="alert"
+          className="mt-2 text-sm text-red-600"
         >
           {uploadError}
         </p>

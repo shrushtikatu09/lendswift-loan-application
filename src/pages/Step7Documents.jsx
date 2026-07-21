@@ -1,11 +1,13 @@
 import { useFormContext } from "react-hook-form";
 
 import FileUpload from "../components/common/FileUpload";
+import SignaturePad from "../components/common/SignaturePad";
 
 function Step7Documents() {
   const {
     watch,
     setValue,
+    register,
     formState: { errors },
   } = useFormContext();
 
@@ -100,6 +102,28 @@ function Step7Documents() {
         setValue={setValue}
         error={errors.photograph?.message}
       />
+            <div className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+        <h3 className="mb-4 text-lg font-semibold">
+          E-Signature
+        </h3>
+
+        <input
+          type="hidden"
+          {...register("signature")}
+        />
+
+        <SignaturePad
+          value={watch("signature")}
+          onChange={(value) =>
+            setValue("signature", value, {
+              shouldDirty: true,
+              shouldTouch: true,
+              shouldValidate: true,
+            })
+          }
+          error={errors.signature?.message}
+        />
+      </div>
     </div>
   );
 }

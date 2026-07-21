@@ -61,6 +61,13 @@ const STEP_FIELDS = {
     "aadhaarCard",
     "salarySlip",
     "bankStatement",
+    "itrDocument",
+    "propertyDocuments",
+    "businessCertificate",
+    "gstReturns",
+    "photograph",
+    "signature",
+    
   ],
 
   8: [],

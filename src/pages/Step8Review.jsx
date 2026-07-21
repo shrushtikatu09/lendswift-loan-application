@@ -5,7 +5,6 @@ import { v4 as uuidv4 } from "uuid";
 import EMISummaryCard from "../components/review/EMISummaryCard";
 import ConsentSection from "../components/review/ConsentSection";
 import SuccessModal from "../components/common/SuccessModal";
-import SignaturePad from "../components/common/SignaturePad";
 
 import { clearSavedDraft } from "../hooks/useAutoSave";
 
@@ -17,14 +16,10 @@ function Step8Review() {
     getValues,
     register,
     trigger,
-    watch,
-    setValue,
     formState: { errors },
   } = useFormContext();
 
   const data = getValues();
-
-  const signature = watch("signature");
 
   const handleSubmitApplication = async () => {
     const valid = await trigger([
@@ -56,41 +51,82 @@ function Step8Review() {
         Step 8 - Review & Submit
       </h2>
 
-      <div className="rounded-lg border p-5">
+      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <h3 className="mb-4 text-lg font-semibold">
           Application Summary
         </h3>
 
-        <div className="space-y-2">
-          <p>
-            <strong>Loan Type:</strong> {data.loanType}
-          </p>
+        <div className="grid gap-4 md:grid-cols-2">
+          <div>
+            <p className="text-sm text-slate-500">
+              Loan Type
+            </p>
 
-          <p>
-            <strong>Loan Amount:</strong> ₹{data.loanAmount}
-          </p>
+            <p className="font-semibold">
+              {data.loanType}
+            </p>
+          </div>
 
-          <p>
-            <strong>Applicant:</strong> {data.fullName}
-          </p>
+          <div>
+            <p className="text-sm text-slate-500">
+              Loan Amount
+            </p>
 
-          <p>
-            <strong>Mobile:</strong> {data.mobile}
-          </p>
+            <p className="font-semibold">
+              ₹{data.loanAmount}
+            </p>
+          </div>
 
-          <p>
-            <strong>PAN:</strong> {data.panNumber}
-          </p>
+          <div>
+            <p className="text-sm text-slate-500">
+              Applicant
+            </p>
 
-          <p>
-            <strong>Employment:</strong> {data.employmentType}
-          </p>
+            <p className="font-semibold">
+              {data.fullName}
+            </p>
+          </div>
+
+          <div>
+            <p className="text-sm text-slate-500">
+              Mobile
+            </p>
+
+            <p className="font-semibold">
+              {data.mobile}
+            </p>
+          </div>
+
+          <div>
+            <p className="text-sm text-slate-500">
+              PAN
+            </p>
+
+            <p className="font-semibold">
+              {data.panNumber}
+            </p>
+          </div>
+
+          <div>
+            <p className="text-sm text-slate-500">
+              Employment
+            </p>
+
+            <p className="font-semibold">
+              {data.employmentType}
+            </p>
+          </div>
 
           {data.coApplicantName && (
-            <p>
-              <strong>Co-Applicant:</strong>{" "}
-              {data.coApplicantName}
-            </p>
+            <div>
+              <p className="text-sm text-slate-500">
+                Co-Applicant
+              </p>
+
+              <p className="font-semibold">
+                {data.coApplicantName}
+              </p>
+            </div>
           )}
         </div>
       </div>
@@ -101,16 +137,30 @@ function Step8Review() {
         loanTenure={data.loanTenure}
       />
 
-      <SignaturePad
-        value={signature}
-        onChange={(value) =>
-          setValue("signature", value, {
-            shouldValidate: true,
-            shouldDirty: true,
-          })
-        }
-        error={errors.signature?.message}
-      />
+      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <h3 className="mb-4 text-lg font-semibold">
+          Applicant Signature
+        </h3>
+                {data.signature ? (
+          <div className="rounded-lg border bg-slate-50 p-4">
+            <img
+              src={data.signature}
+              alt="Applicant Signature"
+              className="max-h-40 rounded border bg-white"
+            />
+
+            <p className="mt-3 text-sm font-medium text-green-600">
+              ✓ Signature Verified
+            </p>
+          </div>
+        ) : (
+          <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+            <p className="text-sm text-red-600">
+              Signature not available.
+            </p>
+          </div>
+        )}
+      </div>
 
       <ConsentSection
         register={register}
@@ -120,7 +170,7 @@ function Step8Review() {
       <button
         type="button"
         onClick={handleSubmitApplication}
-        className="w-full rounded-lg bg-green-600 py-3 font-semibold text-white hover:bg-green-700"
+        className="w-full rounded-xl bg-green-600 py-3 text-base font-semibold text-white transition hover:bg-green-700"
       >
         Submit Loan Application
       </button>
