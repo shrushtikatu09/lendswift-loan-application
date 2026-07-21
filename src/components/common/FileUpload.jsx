@@ -2,6 +2,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -36,32 +37,56 @@ function FileUpload({
   const [sizeInfo, setSizeInfo] =
     useState(null);
 
+  const uploadInterval =
+    useRef(null);
+
+  const previewUrl =
+    useRef(null);
+
   const file = watch(name);
 
   const preview = useMemo(() => {
     if (
-      file &&
-      file.type &&
-      file.type.startsWith("image/")
+      !file ||
+      !file.type ||
+      !file.type.startsWith("image/")
     ) {
-      return URL.createObjectURL(file);
+      return null;
     }
 
-    return null;
+    if (previewUrl.current) {
+      URL.revokeObjectURL(
+        previewUrl.current
+      );
+    }
+
+    previewUrl.current =
+      URL.createObjectURL(file);
+
+    return previewUrl.current;
   }, [file]);
 
   useEffect(() => {
     return () => {
-      if (preview) {
-        URL.revokeObjectURL(preview);
+      if (previewUrl.current) {
+        URL.revokeObjectURL(
+          previewUrl.current
+        );
+      }
+
+      if (uploadInterval.current) {
+        clearInterval(
+          uploadInterval.current
+        );
       }
     };
-  }, [preview]);
+  }, []);
 
   useEffect(() => {
     if (!file) {
       setUploadStatus("Pending");
       setUploadProgress(0);
+      setSizeInfo(null);
       return;
     }
 
@@ -70,22 +95,38 @@ function FileUpload({
   }, [file]);
 
   const simulateUpload = () => {
+    if (uploadInterval.current) {
+      clearInterval(
+        uploadInterval.current
+      );
+    }
+
     setUploadStatus("Uploading");
     setUploadProgress(0);
 
     let progress = 0;
 
-    const interval = setInterval(() => {
-      progress += 10;
+    uploadInterval.current =
+      setInterval(() => {
+        progress += 10;
 
-      setUploadProgress(progress);
+        if (progress >= 100) {
+          progress = 100;
 
-      if (progress >= 100) {
-        clearInterval(interval);
+          clearInterval(
+            uploadInterval.current
+          );
 
-        setUploadStatus("Uploaded");
-      }
-    }, 100);
+          uploadInterval.current =
+            null;
+
+          setUploadStatus(
+            "Uploaded"
+          );
+        }
+
+        setUploadProgress(progress);
+      }, 100);
   };
 
   const onDrop = useCallback(
@@ -95,69 +136,108 @@ function FileUpload({
     ) => {
       setUploadError("");
 
-      if (rejectedFiles.length > 0) {
-        const reason =
-          rejectedFiles[0].errors[0];
+      if (
+        uploadInterval.current
+      ) {
+        clearInterval(
+          uploadInterval.current
+        );
 
-        if (
-          reason.code === "file-too-large"
-        ) {
-          setUploadError(
-            "Maximum file size is 5 MB"
-          );
-        } else {
-          setUploadError(
-            "Only JPG, PNG and PDF files are allowed"
-          );
+        uploadInterval.current =
+          null;
+      }
+
+      if (
+        rejectedFiles.length > 0
+      ) {
+        const reason =
+          rejectedFiles[0]?.errors?.[0];
+
+        switch (reason?.code) {
+          case "file-too-large":
+            setUploadError(
+              "Maximum file size is 5 MB."
+            );
+            break;
+
+          case "file-invalid-type":
+            setUploadError(
+              "Only JPG, PNG and PDF files are allowed."
+            );
+            break;
+
+          default:
+            setUploadError(
+              "Unable to upload this file."
+            );
         }
 
         return;
       }
 
       const selectedFile =
-        acceptedFiles[0];
+        acceptedFiles?.[0];
 
-      if (!selectedFile) return;
-
-      let finalFile = selectedFile;
-
-      let originalSize =
-        selectedFile.size;
-
-      let compressedSize =
-        selectedFile.size;
-
-      if (
-        selectedFile.type.startsWith(
-          "image/"
-        )
-      ) {
-        const compressed =
-          await compressImage(
-            selectedFile
-          );
-
-        finalFile = compressed.file;
-
-        originalSize =
-          compressed.originalSize;
-
-        compressedSize =
-          compressed.compressedSize;
+      if (!selectedFile) {
+        return;
       }
 
-      setSizeInfo({
-        originalSize,
-        compressedSize,
-      });
+      try {
+        let finalFile =
+          selectedFile;
 
-      simulateUpload();
+        let originalSize =
+          selectedFile.size;
 
-      setValue(name, finalFile, {
-        shouldDirty: true,
-        shouldTouch: true,
-        shouldValidate: true,
-      });
+        let compressedSize =
+          selectedFile.size;
+
+        if (
+          selectedFile.type.startsWith(
+            "image/"
+          )
+        ) {
+          const compressed =
+            await compressImage(
+              selectedFile
+            );
+
+          finalFile =
+            compressed.file;
+
+          originalSize =
+            compressed.originalSize;
+
+          compressedSize =
+            compressed.compressedSize;
+        }
+
+        setSizeInfo({
+          originalSize,
+          compressedSize,
+        });
+
+        setValue(
+          name,
+          finalFile,
+          {
+            shouldDirty: true,
+            shouldTouch: true,
+            shouldValidate: true,
+          }
+        );
+
+        simulateUpload();
+              } catch (err) {
+        console.error(err);
+
+        setUploadError(
+          "Something went wrong while processing the file."
+        );
+
+        setUploadStatus("Pending");
+        setUploadProgress(0);
+      }
     },
     [name, setValue]
   );
@@ -174,6 +254,24 @@ function FileUpload({
   });
 
   const removeFile = () => {
+    if (uploadInterval.current) {
+      clearInterval(
+        uploadInterval.current
+      );
+
+      uploadInterval.current =
+        null;
+    }
+
+    if (previewUrl.current) {
+      URL.revokeObjectURL(
+        previewUrl.current
+      );
+
+      previewUrl.current =
+        null;
+    }
+
     setValue(name, null, {
       shouldValidate: true,
       shouldDirty: true,
@@ -204,7 +302,9 @@ function FileUpload({
               : "border-gray-300 hover:border-blue-500 hover:bg-gray-50"
           }`}
         >
-          <input {...getInputProps()} />
+          <input
+            {...getInputProps()}
+          />
 
           <div className="text-4xl">
             📤
@@ -223,7 +323,8 @@ function FileUpload({
           </p>
         </div>
       )}
-            {file && (
+
+      {file && (
         <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="flex items-start gap-4">
             {preview ? (
@@ -244,46 +345,71 @@ function FileUpload({
                   {file.name}
                 </h4>
 
-                <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
-                  ✓ Uploaded
+                <span
+                  className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                    uploadStatus ===
+                    "Uploaded"
+                      ? "bg-green-100 text-green-700"
+                      : uploadStatus ===
+                        "Uploading"
+                      ? "bg-blue-100 text-blue-700"
+                      : "bg-gray-100 text-gray-700"
+                  }`}
+                >
+                  {uploadStatus ===
+                  "Uploaded"
+                    ? "✓ Uploaded"
+                    : uploadStatus ===
+                      "Uploading"
+                    ? "Uploading..."
+                    : "Pending"}
                 </span>
               </div>
 
               <p className="mt-2 text-sm text-slate-500">
-                Size :
-                {" "}
-                {file?.size
-                  ? (file.size / 1024 / 1024).toFixed(2)
-                  : "0.00"}{" "}
+                Size :{" "}
+                {(
+                  (sizeInfo?.compressedSize ??
+                    file?.size ??
+                    0) /
+                  1024 /
+                  1024
+                ).toFixed(2)}{" "}
                 MB
               </p>
-
-              {sizeInfo && (
-                <p className="text-xs text-slate-400">
-                  Compressed from{" "}
-                  {sizeInfo.originalSize
-                    ? (
-                        sizeInfo.originalSize /
-                        1024 /
-                        1024
-                      ).toFixed(2)
-                    : "0.00"}{" "}
-                  MB
-                </p>
-              )}
+                            {sizeInfo &&
+                sizeInfo.originalSize >
+                  sizeInfo.compressedSize && (
+                  <p className="text-xs text-slate-400">
+                    Compressed from{" "}
+                    {(
+                      sizeInfo.originalSize /
+                      1024 /
+                      1024
+                    ).toFixed(2)}{" "}
+                    MB
+                  </p>
+                )}
 
               <div className="mt-4">
                 <div className="mb-1 flex justify-between text-xs text-slate-500">
-                  <span>{uploadStatus}</span>
+                  <span>
+                    {uploadStatus}
+                  </span>
 
-                  <span>{uploadProgress}%</span>
+                  <span>
+                    {uploadProgress}%
+                  </span>
                 </div>
 
                 <div className="h-2 overflow-hidden rounded-full bg-slate-200">
                   <div
                     className="h-full rounded-full bg-blue-600 transition-all duration-300"
                     style={{
-                      width: `${uploadProgress}%`,
+                      width: `${Math.min(
+                        uploadProgress,
+                        100
+                      )}%`,
                     }}
                   />
                 </div>
@@ -292,7 +418,11 @@ function FileUpload({
               <button
                 type="button"
                 onClick={removeFile}
-                className="mt-4 rounded-md border border-red-200 px-3 py-1 text-sm font-medium text-red-600 transition hover:bg-red-50"
+                disabled={
+                  uploadStatus ===
+                  "Uploading"
+                }
+                className="mt-4 rounded-md border border-red-200 px-3 py-1 text-sm font-medium text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Remove File
               </button>
@@ -310,9 +440,11 @@ function FileUpload({
         </p>
       )}
 
-      <ErrorMessage message={error} />
+      <ErrorMessage
+        message={error}
+      />
     </div>
   );
-}
+  }
 
 export default FileUpload;
