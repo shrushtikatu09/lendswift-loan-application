@@ -92,9 +92,11 @@ export function useLoanForm() {
       coApplicantName: "",
       relationship: "",
       coApplicantPAN: "",
+      coApplicantPanVerified: false,
       coApplicantMobile: "",
       coApplicantIncome: undefined,
       coApplicantConsent: false,
+      coApplicantSignature: null,
 
       // =========================
       // Step 7 - Documents
