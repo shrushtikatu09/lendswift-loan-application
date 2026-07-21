@@ -1,17 +1,9 @@
-import { useMemo } from "react";
-
 function SuccessModal({
   open,
   onClose,
   applicationData = {},
+  applicationId,
 }) {
-  const referenceNumber = useMemo(() => {
-    return `LS-${Math.random()
-      .toString(36)
-      .substring(2, 8)
-      .toUpperCase()}`;
-  }, []);
-
   if (!open) return null;
 
   const {
@@ -54,11 +46,11 @@ function SuccessModal({
 
               <div className="flex justify-between">
                 <span className="text-gray-500">
-                  Reference Number
+                  Application ID
                 </span>
 
                 <span className="font-semibold text-[#1F4E79]">
-                  {referenceNumber}
+                  {applicationId}
                 </span>
               </div>
 
@@ -77,7 +69,7 @@ function SuccessModal({
                   Loan Type
                 </span>
 
-                <span className="font-medium">
+                <span className="font-medium capitalize">
                   {loanType || "--"}
                 </span>
               </div>
@@ -88,8 +80,7 @@ function SuccessModal({
                 </span>
 
                 <span className="font-semibold">
-                  ₹
-                  {Number(
+                  ₹{Number(
                     loanAmount || 0
                   ).toLocaleString("en-IN")}
                 </span>
@@ -110,7 +101,10 @@ function SuccessModal({
           </div>
 
           <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-700">
-            Our loan team will verify your application and contact you shortly after reviewing your documents.
+            Thank you for choosing <strong>LendSwift</strong>.
+            Your application has been successfully submitted.
+            Our loan verification team will review your documents
+            and contact you shortly regarding the next steps.
           </div>
 
         </div>

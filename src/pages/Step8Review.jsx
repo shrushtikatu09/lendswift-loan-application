@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
+import { v4 as uuidv4 } from "uuid";
 
 import EMISummaryCard from "../components/review/EMISummaryCard";
 import ConsentSection from "../components/review/ConsentSection";
 import SuccessModal from "../components/common/SuccessModal";
 import SignaturePad from "../components/common/SignaturePad";
 
+import { clearSavedDraft } from "../hooks/useAutoSave";
+
 function Step8Review() {
   const [submitted, setSubmitted] = useState(false);
+  const [applicationId, setApplicationId] = useState("");
 
   const {
     getValues,
@@ -35,54 +39,51 @@ function Step8Review() {
       return;
     }
 
-    console.log("Loan Application Submitted", getValues());
+    const generatedId = `LS-${uuidv4()
+      .split("-")[0]
+      .toUpperCase()}`;
+
+    setApplicationId(generatedId);
+
+    clearSavedDraft();
 
     setSubmitted(true);
   };
 
   return (
     <div className="space-y-6">
-
       <h2 className="text-2xl font-semibold">
         Step 8 - Review & Submit
       </h2>
 
       <div className="rounded-lg border p-5">
-
         <h3 className="mb-4 text-lg font-semibold">
           Application Summary
         </h3>
 
         <div className="space-y-2">
-
           <p>
-            <strong>Loan Type:</strong>{" "}
-            {data.loanType}
+            <strong>Loan Type:</strong> {data.loanType}
           </p>
 
           <p>
-            <strong>Loan Amount:</strong>{" "}
-            ₹{data.loanAmount}
+            <strong>Loan Amount:</strong> ₹{data.loanAmount}
           </p>
 
           <p>
-            <strong>Applicant:</strong>{" "}
-            {data.fullName}
+            <strong>Applicant:</strong> {data.fullName}
           </p>
 
           <p>
-            <strong>Mobile:</strong>{" "}
-            {data.mobile}
+            <strong>Mobile:</strong> {data.mobile}
           </p>
 
           <p>
-            <strong>PAN:</strong>{" "}
-            {data.panNumber}
+            <strong>PAN:</strong> {data.panNumber}
           </p>
 
           <p>
-            <strong>Employment:</strong>{" "}
-            {data.employmentType}
+            <strong>Employment:</strong> {data.employmentType}
           </p>
 
           {data.coApplicantName && (
@@ -91,16 +92,14 @@ function Step8Review() {
               {data.coApplicantName}
             </p>
           )}
-
         </div>
-
       </div>
 
       <EMISummaryCard
-  loanType={data.loanType}
-  loanAmount={data.loanAmount}
-  loanTenure={data.loanTenure}
-/>
+        loanType={data.loanType}
+        loanAmount={data.loanAmount}
+        loanTenure={data.loanTenure}
+      />
 
       <SignaturePad
         value={signature}
@@ -130,8 +129,8 @@ function Step8Review() {
         open={submitted}
         onClose={() => setSubmitted(false)}
         applicationData={data}
+        applicationId={applicationId}
       />
-
     </div>
   );
 }
