@@ -51,6 +51,9 @@ const STEP_FIELDS = {
     "coApplicantMobile",
     "coApplicantIncome",
     "coApplicantConsent",
+    "coApplicantPAN",
+    "coApplicantPanVerified",
+    "coApplicantSignature",
   ],
 
   7: [
