@@ -1,16 +1,86 @@
-# React + Vite
+# LendSwift Multi-Step Loan Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A production-grade multi-step loan application built using React, React Hook Form and Zod.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- 8-Step Loan Application Wizard
+- Personal, Home and Business Loans
+- Dynamic Form Validation
+- Cross-Step Validation
+- Auto Save & Resume Draft
+- PAN & Aadhaar Verification Simulation
+- Address Auto Fill using PIN Code
+- Conditional Form Rendering
+- File Upload with Preview
+- Signature Capture
+- EMI Calculator
+- Review & Submit Flow
+- Success Modal
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React
+- Vite
+- React Hook Form
+- Zod
+- Tailwind CSS
+- React Signature Canvas
 
-## Expanding the ESLint configuration
+## Installation
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+npm install
+```
+
+Run development server
+
+```bash
+npm run dev
+```
+
+Build
+
+```bash
+npm run build
+```
+
+## Project Structure
+
+```
+src/
+components/
+hooks/
+pages/
+schemas/
+utils/
+context/
+```
+
+## Architecture
+
+The application follows a Wizard based multi-step architecture.
+
+- React Hook Form manages form state.
+- Zod provides schema validation.
+- Context API shares application state.
+- Auto-save stores encrypted drafts in Local Storage.
+- Conditional rendering is based on loan type and employment type.
+
+## Validation
+
+- Loan specific validation
+- PAN validation
+- Aadhaar format validation
+- Cross-step validation
+- Conditional document validation
+
+## Future Improvements
+
+- Aadhaar Verhoeff checksum validation
+- Complete Cypress E2E test suite
+- Accessibility audit improvements
+
+## Author
+
+Shrushti Katu
