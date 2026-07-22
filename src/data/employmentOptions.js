@@ -11,8 +11,31 @@ export const EMPLOYMENT_TYPES = [
     label: "Business Owner",
     value: "business",
   },
+];
+
+export const BUSINESS_TYPES = [
   {
-    label: "Student",
-    value: "student",
+    label: "Retail",
+    value: "retail",
+  },
+  {
+    label: "Manufacturing",
+    value: "manufacturing",
+  },
+  {
+    label: "IT Services",
+    value: "it-services",
+  },
+  {
+    label: "Healthcare",
+    value: "healthcare",
+  },
+  {
+    label: "Construction",
+    value: "construction",
+  },
+  {
+    label: "Others",
+    value: "others",
   },
 ];
