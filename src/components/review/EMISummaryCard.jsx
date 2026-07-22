@@ -14,6 +14,12 @@ function formatCurrency(amount) {
   }).format(amount || 0);
 }
 
+const LOAN_TYPE_LABELS = {
+  personal: "Personal Loan",
+  home: "Home Loan",
+  business: "Business Loan",
+};
+
 function EMISummaryCard({
   loanType,
   loanAmount,
@@ -49,7 +55,10 @@ function EMISummaryCard({
   const summary = [
     {
       label: "Loan Type",
-      value: loanType || "—",
+      value:
+        LOAN_TYPE_LABELS[loanType] ||
+        loanType ||
+        "—",
     },
     {
       label: "Loan Amount",

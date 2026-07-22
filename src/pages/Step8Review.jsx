@@ -8,9 +8,22 @@ import SuccessModal from "../components/common/SuccessModal";
 
 import { clearSavedDraft } from "../hooks/useAutoSave";
 
+const LOAN_TYPE_LABELS = {
+  personal: "Personal Loan",
+  home: "Home Loan",
+  business: "Business Loan",
+};
+
+const EMPLOYMENT_LABELS = {
+  salaried: "Salaried",
+  "self-employed": "Self Employed",
+  business: "Business Owner",
+};
+
 function Step8Review() {
   const [submitted, setSubmitted] = useState(false);
   const [applicationId, setApplicationId] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const {
     getValues,
@@ -22,15 +35,18 @@ function Step8Review() {
   const data = getValues();
 
   const handleSubmitApplication = async () => {
+    setSubmitting(true);
+
     const valid = await trigger([
-      "signature",
-      "declarationConsent",
-      "creditCheckConsent",
-      "termsConsent",
-      "communicationConsent",
-    ]);
+    "signature",
+  "declarationConsent",
+  "creditCheckConsent",
+  "termsConsent",
+  "communicationConsent",
+]);
 
     if (!valid) {
+      setSubmitting(false);
       return;
     }
 
@@ -43,6 +59,8 @@ function Step8Review() {
     clearSavedDraft();
 
     setSubmitted(true);
+
+    setSubmitting(false);
   };
 
   return (
@@ -50,6 +68,10 @@ function Step8Review() {
       <h2 className="text-2xl font-semibold">
         Step 8 - Review & Submit
       </h2>
+
+      {/* =========================
+          Application Summary
+      ========================= */}
 
       <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <h3 className="mb-4 text-lg font-semibold">
@@ -63,7 +85,8 @@ function Step8Review() {
             </p>
 
             <p className="font-semibold">
-              {data.loanType}
+              {LOAN_TYPE_LABELS[data.loanType] ||
+                data.loanType}
             </p>
           </div>
 
@@ -73,7 +96,9 @@ function Step8Review() {
             </p>
 
             <p className="font-semibold">
-              ₹{data.loanAmount}
+              ₹{Number(
+                data.loanAmount || 0
+              ).toLocaleString("en-IN")}
             </p>
           </div>
 
@@ -99,7 +124,7 @@ function Step8Review() {
 
           <div>
             <p className="text-sm text-slate-500">
-              PAN
+              PAN Number
             </p>
 
             <p className="font-semibold">
@@ -113,7 +138,9 @@ function Step8Review() {
             </p>
 
             <p className="font-semibold">
-              {data.employmentType}
+              {EMPLOYMENT_LABELS[
+                data.employmentType
+              ] || data.employmentType}
             </p>
           </div>
 
@@ -131,17 +158,85 @@ function Step8Review() {
         </div>
       </div>
 
+      {/* =========================
+          EMI Summary
+      ========================= */}
+
       <EMISummaryCard
         loanType={data.loanType}
         loanAmount={data.loanAmount}
         loanTenure={data.loanTenure}
       />
+            {/* =========================
+          Uploaded Documents
+      ========================= */}
+
+      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h3 className="mb-4 text-lg font-semibold">
+          Uploaded Documents
+        </h3>
+
+        <div className="grid gap-3 md:grid-cols-2">
+          <div className="rounded-lg border p-3">
+            ✅ PAN Card
+          </div>
+
+          <div className="rounded-lg border p-3">
+            ✅ Aadhaar Card
+          </div>
+
+          <div className="rounded-lg border p-3">
+            ✅ Bank Statement
+          </div>
+
+          {data.salarySlip && (
+            <div className="rounded-lg border p-3">
+              ✅ Salary Slip
+            </div>
+          )}
+
+          {data.itrDocument && (
+            <div className="rounded-lg border p-3">
+              ✅ ITR Document
+            </div>
+          )}
+
+          {data.propertyDocuments && (
+            <div className="rounded-lg border p-3">
+              ✅ Property Documents
+            </div>
+          )}
+
+          {data.businessCertificate && (
+            <div className="rounded-lg border p-3">
+              ✅ Business Registration Certificate
+            </div>
+          )}
+
+          {data.gstReturns && (
+            <div className="rounded-lg border p-3">
+              ✅ GST Returns
+            </div>
+          )}
+
+          {data.photograph && (
+            <div className="rounded-lg border p-3">
+              ✅ Applicant Photograph
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* =========================
+          Applicant Signature
+      ========================= */}
 
       <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
         <h3 className="mb-4 text-lg font-semibold">
           Applicant Signature
         </h3>
-                {data.signature ? (
+
+        {data.signature ? (
           <div className="rounded-lg border bg-slate-50 p-4">
             <img
               src={data.signature}
@@ -162,6 +257,10 @@ function Step8Review() {
         )}
       </div>
 
+      {/* =========================
+          Final Consents
+      ========================= */}
+
       <ConsentSection
         register={register}
         errors={errors}
@@ -170,9 +269,16 @@ function Step8Review() {
       <button
         type="button"
         onClick={handleSubmitApplication}
-        className="w-full rounded-xl bg-green-600 py-3 text-base font-semibold text-white transition hover:bg-green-700"
+        disabled={submitting}
+        className={`w-full rounded-xl py-3 text-base font-semibold text-white transition ${
+          submitting
+            ? "cursor-not-allowed bg-gray-400"
+            : "bg-green-600 hover:bg-green-700"
+        }`}
       >
-        Submit Loan Application
+        {submitting
+          ? "Submitting Application..."
+          : "Submit Loan Application"}
       </button>
 
       <SuccessModal

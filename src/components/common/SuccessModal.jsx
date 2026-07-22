@@ -1,3 +1,9 @@
+const LOAN_TYPE_LABELS = {
+  personal: "Personal Loan",
+  home: "Home Loan",
+  business: "Business Loan",
+};
+
 function SuccessModal({
   open,
   onClose,
@@ -69,8 +75,10 @@ function SuccessModal({
                   Loan Type
                 </span>
 
-                <span className="font-medium capitalize">
-                  {loanType || "--"}
+                <span className="font-medium">
+                  {LOAN_TYPE_LABELS[loanType] ||
+                    loanType ||
+                    "--"}
                 </span>
               </div>
 

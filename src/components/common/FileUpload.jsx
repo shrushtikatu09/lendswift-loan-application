@@ -11,7 +11,15 @@ import { useDropzone } from "react-dropzone";
 import ErrorMessage from "./ErrorMessage";
 import { compressImage } from "../../utils/imageCompression";
 
-const MAX_SIZE = 5 * 1024 * 1024;
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const MAX_IMAGE_SIZE = 2 * 1024 * 1024;
+const MAX_FILES = 1;
+
+const STATUS = {
+  PENDING: "Pending",
+  UPLOADING: "Uploading",
+  UPLOADED: "Uploaded",
+};
 
 function FileUpload({
   label,
@@ -25,14 +33,16 @@ function FileUpload({
     "application/pdf": [".pdf"],
   },
 }) {
+  const file = watch(name);
+
   const [uploadError, setUploadError] =
     useState("");
 
+  const [uploadStatus, setUploadStatus] =
+    useState(STATUS.PENDING);
+
   const [uploadProgress, setUploadProgress] =
     useState(0);
-
-  const [uploadStatus, setUploadStatus] =
-    useState("Pending");
 
   const [sizeInfo, setSizeInfo] =
     useState(null);
@@ -43,36 +53,36 @@ function FileUpload({
   const previewUrl =
     useRef(null);
 
-  const file = watch(name);
-
-  const preview = useMemo(() => {
-    if (
-      !file ||
-      !file.type ||
-      !file.type.startsWith("image/")
-    ) {
-      return null;
-    }
-
+  const clearPreview = useCallback(() => {
     if (previewUrl.current) {
       URL.revokeObjectURL(
         previewUrl.current
       );
+
+      previewUrl.current = null;
+    }
+  }, []);
+
+  const preview = useMemo(() => {
+    clearPreview();
+
+    if (
+      !file ||
+      !(file instanceof File) ||
+      !file.type?.startsWith("image/")
+    ) {
+      return null;
     }
 
     previewUrl.current =
       URL.createObjectURL(file);
 
     return previewUrl.current;
-  }, [file]);
+  }, [file, clearPreview]);
 
   useEffect(() => {
     return () => {
-      if (previewUrl.current) {
-        URL.revokeObjectURL(
-          previewUrl.current
-        );
-      }
+      clearPreview();
 
       if (uploadInterval.current) {
         clearInterval(
@@ -80,28 +90,46 @@ function FileUpload({
         );
       }
     };
-  }, []);
+  }, [clearPreview]);
 
   useEffect(() => {
     if (!file) {
-      setUploadStatus("Pending");
+      setUploadStatus(
+        STATUS.PENDING
+      );
+
       setUploadProgress(0);
+
       setSizeInfo(null);
+
       return;
     }
 
-    setUploadStatus("Uploaded");
+    setUploadStatus(
+      STATUS.UPLOADED
+    );
+
     setUploadProgress(100);
   }, [file]);
 
-  const simulateUpload = () => {
+  const stopUpload = () => {
     if (uploadInterval.current) {
       clearInterval(
         uploadInterval.current
       );
-    }
 
-    setUploadStatus("Uploading");
+      uploadInterval.current =
+        null;
+    }
+  };
+
+  const simulateUpload = () => {
+    stopUpload();
+
+    setUploadStatus(
+      STATUS.UPLOADING
+    );
+
     setUploadProgress(0);
 
     let progress = 0;
@@ -113,15 +141,10 @@ function FileUpload({
         if (progress >= 100) {
           progress = 100;
 
-          clearInterval(
-            uploadInterval.current
-          );
-
-          uploadInterval.current =
-            null;
+          stopUpload();
 
           setUploadStatus(
-            "Uploaded"
+            STATUS.UPLOADED
           );
         }
 
@@ -129,23 +152,44 @@ function FileUpload({
       }, 100);
   };
 
-  const onDrop = useCallback(
+  const validateImageSize =
+    (selectedFile) => {
+      if (
+        selectedFile.type.startsWith(
+          "image/"
+        ) &&
+        selectedFile.size >
+          MAX_FILE_SIZE
+      ) {
+        return "Image exceeds maximum size of 5 MB.";
+      }
+
+      return null;
+    };
+
+  const processImage =
+    async (selectedFile) => {
+      const compressed =
+        await compressImage(
+          selectedFile
+        );
+
+      return {
+        file: compressed.file,
+        originalSize:
+          compressed.originalSize,
+        compressedSize:
+          compressed.compressedSize,
+      };
+    };
+      const onDrop = useCallback(
     async (
       acceptedFiles,
       rejectedFiles
     ) => {
       setUploadError("");
 
-      if (
-        uploadInterval.current
-      ) {
-        clearInterval(
-          uploadInterval.current
-        );
-
-        uploadInterval.current =
-          null;
-      }
+      stopUpload();
 
       if (
         rejectedFiles.length > 0
@@ -156,13 +200,19 @@ function FileUpload({
         switch (reason?.code) {
           case "file-too-large":
             setUploadError(
-              "Maximum file size is 5 MB."
+              "Maximum allowed file size is 5 MB."
             );
             break;
 
           case "file-invalid-type":
             setUploadError(
-              "Only JPG, PNG and PDF files are allowed."
+              "Only JPG, PNG and PDF files are supported."
+            );
+            break;
+
+          case "too-many-files":
+            setUploadError(
+              "Only one file can be uploaded."
             );
             break;
 
@@ -182,6 +232,18 @@ function FileUpload({
         return;
       }
 
+      const validationError =
+        validateImageSize(
+          selectedFile
+        );
+
+      if (validationError) {
+        setUploadError(
+          validationError
+        );
+        return;
+      }
+
       try {
         let finalFile =
           selectedFile;
@@ -197,19 +259,28 @@ function FileUpload({
             "image/"
           )
         ) {
-          const compressed =
-            await compressImage(
+          const processed =
+            await processImage(
               selectedFile
             );
 
           finalFile =
-            compressed.file;
+            processed.file;
 
           originalSize =
-            compressed.originalSize;
+            processed.originalSize;
 
           compressedSize =
-            compressed.compressedSize;
+            processed.compressedSize;
+
+          if (
+            compressedSize >
+            MAX_IMAGE_SIZE
+          ) {
+            console.warn(
+              "Compressed image is still larger than recommended size."
+            );
+          }
         }
 
         setSizeInfo({
@@ -228,14 +299,17 @@ function FileUpload({
         );
 
         simulateUpload();
-              } catch (err) {
+      } catch (err) {
         console.error(err);
 
         setUploadError(
-          "Something went wrong while processing the file."
+          "Something went wrong while processing the selected file."
         );
 
-        setUploadStatus("Pending");
+        setUploadStatus(
+          STATUS.PENDING
+        );
+
         setUploadProgress(0);
       }
     },
@@ -248,78 +322,94 @@ function FileUpload({
     isDragActive,
   } = useDropzone({
     onDrop,
-    multiple: false,
     accept,
-    maxSize: MAX_SIZE,
+    multiple: false,
+    maxFiles: MAX_FILES,
+    maxSize: MAX_FILE_SIZE,
   });
 
   const removeFile = () => {
-    if (uploadInterval.current) {
-      clearInterval(
-        uploadInterval.current
-      );
+    stopUpload();
 
-      uploadInterval.current =
-        null;
-    }
-
-    if (previewUrl.current) {
-      URL.revokeObjectURL(
-        previewUrl.current
-      );
-
-      previewUrl.current =
-        null;
-    }
+    clearPreview();
 
     setValue(name, null, {
-      shouldValidate: true,
       shouldDirty: true,
       shouldTouch: true,
+      shouldValidate: true,
     });
 
     setUploadError("");
 
-    setUploadStatus("Pending");
+    setUploadStatus(
+      STATUS.PENDING
+    );
 
     setUploadProgress(0);
 
     setSizeInfo(null);
   };
 
-  return (
+  const displaySize =
+    (
+      sizeInfo?.compressedSize ??
+      file?.size ??
+      0
+    ) /
+    1024 /
+    1024;
+
+  const originalSize =
+    (
+      sizeInfo?.originalSize ??
+      0
+    ) /
+    1024 /
+    1024;
+
+  const isCompressed =
+    sizeInfo &&
+    sizeInfo.originalSize >
+      sizeInfo.compressedSize;
+        return (
     <div className="mb-6">
-      <label className="mb-2 block font-semibold">
+      <label
+        htmlFor={name}
+        className="mb-2 block font-semibold text-slate-800"
+      >
         {label}
       </label>
 
       {!file && (
         <div
           {...getRootProps()}
-          className={`cursor-pointer rounded-xl border-2 border-dashed p-8 text-center transition-all ${
+          className={`cursor-pointer rounded-xl border-2 border-dashed p-8 text-center transition-all duration-200 ${
             isDragActive
               ? "border-blue-600 bg-blue-50"
               : "border-gray-300 hover:border-blue-500 hover:bg-gray-50"
           }`}
         >
           <input
+            id={name}
             {...getInputProps()}
+            aria-label={label}
           />
 
-          <div className="text-4xl">
+          <div className="text-5xl">
             📤
           </div>
 
-          <p className="mt-3 font-semibold">
+          <p className="mt-3 font-semibold text-slate-700">
             Click or Drag & Drop
           </p>
 
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-2 text-sm text-slate-500">
+            Supported Files:
             JPG • PNG • PDF
           </p>
 
-          <p className="text-xs text-gray-400">
-            Max Size 5 MB
+          <p className="text-xs text-slate-400">
+            Maximum Size: 5 MB
           </p>
         </div>
       )}
@@ -330,7 +420,7 @@ function FileUpload({
             {preview ? (
               <img
                 src={preview}
-                alt="Preview"
+                alt="Document Preview"
                 className="h-24 w-24 rounded-lg border object-cover"
               />
             ) : (
@@ -340,56 +430,45 @@ function FileUpload({
             )}
 
             <div className="flex-1">
-              <div className="flex items-center justify-between">
-                <h4 className="max-w-[260px] truncate font-semibold">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h4 className="max-w-xs truncate font-semibold">
                   {file.name}
                 </h4>
 
                 <span
                   className={`rounded-full px-3 py-1 text-xs font-semibold ${
                     uploadStatus ===
-                    "Uploaded"
+                    STATUS.UPLOADED
                       ? "bg-green-100 text-green-700"
                       : uploadStatus ===
-                        "Uploading"
+                        STATUS.UPLOADING
                       ? "bg-blue-100 text-blue-700"
                       : "bg-gray-100 text-gray-700"
                   }`}
                 >
                   {uploadStatus ===
-                  "Uploaded"
+                  STATUS.UPLOADED
                     ? "✓ Uploaded"
                     : uploadStatus ===
-                      "Uploading"
+                      STATUS.UPLOADING
                     ? "Uploading..."
                     : "Pending"}
                 </span>
               </div>
 
-              <p className="mt-2 text-sm text-slate-500">
-                Size :{" "}
-                {(
-                  (sizeInfo?.compressedSize ??
-                    file?.size ??
-                    0) /
-                  1024 /
-                  1024
-                ).toFixed(2)}{" "}
-                MB
-              </p>
-                            {sizeInfo &&
-                sizeInfo.originalSize >
-                  sizeInfo.compressedSize && (
+              <div className="mt-3 space-y-1 text-sm text-slate-500">
+                <p>
+                  Current Size :{" "}
+                  {displaySize.toFixed(2)} MB
+                </p>
+
+                {isCompressed && (
                   <p className="text-xs text-slate-400">
-                    Compressed from{" "}
-                    {(
-                      sizeInfo.originalSize /
-                      1024 /
-                      1024
-                    ).toFixed(2)}{" "}
-                    MB
+                    Original Size :{" "}
+                    {originalSize.toFixed(2)} MB
                   </p>
                 )}
+              </div>
 
               <div className="mt-4">
                 <div className="mb-1 flex justify-between text-xs text-slate-500">
@@ -420,7 +499,7 @@ function FileUpload({
                 onClick={removeFile}
                 disabled={
                   uploadStatus ===
-                  "Uploading"
+                  STATUS.UPLOADING
                 }
                 className="mt-4 rounded-md border border-red-200 px-3 py-1 text-sm font-medium text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
@@ -430,10 +509,10 @@ function FileUpload({
           </div>
         </div>
       )}
-
-      {uploadError && (
+            {uploadError && (
         <p
           role="alert"
+          aria-live="polite"
           className="mt-2 text-sm text-red-600"
         >
           {uploadError}
@@ -445,6 +524,6 @@ function FileUpload({
       />
     </div>
   );
-  }
+}
 
 export default FileUpload;
